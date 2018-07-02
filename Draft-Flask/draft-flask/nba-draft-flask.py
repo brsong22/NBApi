@@ -31,14 +31,21 @@ def get_drafts(year):
 	draft = [draft for draft in drafts if draft['year'] == year]
 	if len(draft) == 0:
 		abort(404)
-	return jsonify({'draft': draft[0].get('teams')})
+	return jsonify(draft[0])
 
 @app.route('/nba/draft/api/drafts/<int:year>/<int:pick>', methods=['GET'])
 def get_draft_pick(year, pick):
-	pick = [draft for draft in drafts if draft['year'] == year][0].get('board')[pick-1]
-	if len(pick) == 0:
-		abort(404)
-	return jsonify({'pick': pick})
+	draft = get_drafts(year).get_json()
+	pick_stats = draft['order'].get(str(pick))
+	return jsonify(pick_stats)
+
+@app.route('/nba/draft/api/drafts/<int:year>/<int:pick>/stats', methods=['GET'])
+def get_draft_pick_stats(year, pick):
+	draft = get_drafts(year).get_json()
+	player_stats = draft['players'].get(str(pick))
+	team_abbr = get_draft_pick(year, pick).get_json().get('abbr')
+	team_stats = draft['teams'].get(team_abbr)
+	return jsonify(player_stats, team_stats)
 
 if __name__ == '__main__':
 	app.run(debug=True)
