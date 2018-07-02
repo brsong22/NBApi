@@ -1,8 +1,7 @@
-from lxml import etree as et
-from lxml import html
 import urllib.request
 from datetime import datetime
 import configparser
+import csv
 
 cfg = configparser.ConfigParser()
 cfg.read("draft_flask_cfg.ini")
@@ -11,95 +10,142 @@ cbb_url = cfg.get("Base", "CbbUrl")
 
 prev_year = datetime.today().year-1
 
-prev_draft_urls = []
+team_abbr_lookup = {
+					'Atlanta Hawks': 'ATL',
+					'Boston Celtics': 'BOS',
+					'Brooklyn Nets': 'BKN',
+					'Charlotte Hornets': 'CHA',
+					'Chicago Bulls': 'CHI',
+					'Cleveland Cavaliers': 'CLE',
+					'Dallas Mavericks': 'DAL',
+					'Denver Nuggets': 'DEN',
+					'Detroit Pistons': 'DET',
+					'Golden State Warriors': 'GSW',
+					'Houston Rockets': 'HOU',
+					'Indiana Pacers': 'IND',
+					'Los Angeles Clippers': 'LAC',
+					'Los Angeles Lakers': 'LAL',
+					'Memphis Grizzlies': 'MEM',
+					'Miami Heat': 'MIA',
+					'Milwaukee Bucks': 'MIL',
+					'Minnesota Timberwolves': 'MIN',
+					'New Orleans Pelicans': 'NOP',
+					'New York Knicks': 'NYK',
+					'Oklahoma City Thunder': 'OKC',
+					'Orlando Magic': 'ORL',
+					'Philadelphia 76ers': 'PHI',
+					'Phoenix Suns': 'PHX',
+					'Portland Trail Blazers': 'POR',
+					'Sacramento Kings': 'SAC',
+					'San Antonio Spurs': 'SAS',
+					'Toronto Raptors': 'TOR',
+					'Utah Jazz': 'UTA',
+					'Washington Wizards': 'WAS',
+					'New Orleans Hornets': 'NOP',
+					'New Jersey Nets': 'BKN',
+					'Charlotte Bobcats': 'CHA'}
+
+player_files = []
+team_ranks_files = []
+team_stats_files = []
 for i in range(5):
-	prev_draft_urls.append(nba_url + cfg.get("Draft", "DraftPath") + cfg.get("Draft", "PastDraftUrlPrefix") + str(prev_year-i) + cfg.get("Base", "FileExt"))
+	file_year = str(prev_year - i)
+	player_files.append('[' + file_year +'] Drafted Player Stats.csv')
+	team_ranks_files.append('[' + file_year + '] Team Draft Order and Stats Rankings.csv')
+	team_stats_files.append('[' + file_year + '] Team Draft Order and Stats Totals.csv')
 
+drafts_data = []
+players_data = []
+teams_data = []
 
-def get_draft_data():
-	drafts = []
-	parser = et.HTMLParser()
+for y, f in enumerate(player_files):
+	with open(f, newline='') as player_file:
+		print(prev_year-y)
+		stats_headers = []
+		player_stat_rows = csv.reader(player_file, delimiter=',')
+		player_stat_totals = {}
+		for row_index, stat_row in enumerate(player_stat_rows):
+			if row_index == 0:
+				stats_headers = stat_row
+			else:
+				if not prev_year-y in player_stat_totals:
+					player_stat_totals[prev_year-y] = {}
+				player_stat_totals[prev_year-y][stat_row[0]] = {stat_row[1]:{
+															   	stats_headers[2]: stat_row[2],
+															   	stats_headers[3]: stat_row[3],
+															   	stats_headers[4]: stat_row[4],
+															   	stats_headers[5]: stat_row[5],
+															   	stats_headers[6]: stat_row[6],
+															   	stats_headers[7]: stat_row[7],
+															   	stats_headers[8]: stat_row[8],
+															   	stats_headers[9]: stat_row[9],
+															   	stats_headers[10]: stat_row[10],
+															   	stats_headers[11]: stat_row[11],
+															   	stats_headers[12]: stat_row[12],
+															   	stats_headers[13]: stat_row[13]}}
+		players_data.append(player_stat_totals)
+	player_file.close()
 
-	for year_i, draft_url in enumerate(prev_draft_urls):
-		draft = {'year': prev_year-year_i}
+team_stats_data = {}
+for y, f in enumerate(team_ranks_files):
+	with open(f, newline='') as team_rank_file:
 		draft_order = []
+		stats_headers = []
+		team_stat_rows = csv.reader(team_rank_file, delimiter=',')
+		team_stat_ranks = {}
+		for row_index, stat_row in enumerate(team_stat_rows):
+			if row_index == 0:
+				stats_headers = stat_row
+			else:
+				team_abbr = team_abbr_lookup.get(stat_row[1])
+				draft_order.append(team_abbr)
+				team_stat_ranks[team_abbr] = {stats_headers[1]: stat_row[1],
+											  stats_headers[2]: stat_row[2],
+											  stats_headers[3]: stat_row[3],
+											  stats_headers[4]: stat_row[4],
+											  stats_headers[5]: stat_row[5],
+											  stats_headers[6]: stat_row[6],
+											  stats_headers[7]: stat_row[7],
+											  stats_headers[8]: stat_row[8],
+											  stats_headers[9]: stat_row[9],
+											  stats_headers[10]: stat_row[10],
+											  stats_headers[11]: stat_row[11],
+											  stats_headers[12]: stat_row[12],
+											  stats_headers[13]: stat_row[13]}
+		team_stats_data[prev_year-y] = {'order': draft_order, 'ranks': team_stat_ranks}
+	team_rank_file.close()
 
-		with urllib.request.urlopen(draft_url) as draft_html:
-			draft_tree = et.parse(draft_html, parser)
-		for num in range(int(cfg.get("Draft", "NumPicks"))):
-			#get team info
-			pick_num = num+1
-			team_abbr = draft_tree.xpath('//*[@id="stats"]/tbody/tr[' + str(pick_num) + ']/td[2]/a/text()')[0]
-			team_abbr = 'NJN' if team_abbr == 'BRK' else team_abbr
-			team_abbr = 'NOH' if team_abbr == 'NOP' else team_abbr
-			team_abbr = 'CHA' if team_abbr == 'CHO' else team_abbr #typo on the webpage?
-			team_abbr = 'CHA' if team_abbr == 'CHH' else team_abbr #charlotte hornets team re-name
-			team_name = draft_tree.xpath('//*[@id="stats"]/tbody/tr[' + str(pick_num) + ']/td[2]/a/@title')[0]
-			
-			#team stats rankings
-			team_link = nba_url + cfg.get("Teams", "TeamPath") + "/" + team_abbr + cfg.get("Teams", "TeamStatRanksPage")
-			with urllib.request.urlopen(team_link) as stats_html:
-				team_stats = et.parse(stats_html, parser)
-			rank_3pa = team_stats.xpath('//*[@id="stats"]/tbody/tr[' + str(year_i + 1) + ']/td[17]//text()')[0]
-			rank_3pp = team_stats.xpath('//*[@id="stats"]/tbody/tr[' + str(year_i + 1) + ']/td[18]//text()')[0]
-			rank_2pa = team_stats.xpath('//*[@id="stats"]/tbody/tr[' + str(year_i + 1) + ']/td[20]//text()')[0]
-			rank_2pp = team_stats.xpath('//*[@id="stats"]/tbody/tr[' + str(year_i + 1) + ']/td[21]//text()')[0]
-			rank_fta = team_stats.xpath('//*[@id="stats"]/tbody/tr[' + str(year_i + 1) + ']/td[23]//text()')[0]
-			rank_ftp = team_stats.xpath('//*[@id="stats"]/tbody/tr[' + str(year_i + 1) + ']/td[24]//text()')[0]
-			rank_orb = team_stats.xpath('//*[@id="stats"]/tbody/tr[' + str(year_i + 1) + ']/td[25]//text()')[0]
-			rank_drb = team_stats.xpath('//*[@id="stats"]/tbody/tr[' + str(year_i + 1) + ']/td[26]//text()')[0]
-			rank_ast = team_stats.xpath('//*[@id="stats"]/tbody/tr[' + str(year_i + 1) + ']/td[28]//text()')[0]
-			rank_stl = team_stats.xpath('//*[@id="stats"]/tbody/tr[' + str(year_i + 1) + ']/td[29]//text()')[0]
-			rank_blk = team_stats.xpath('//*[@id="stats"]/tbody/tr[' + str(year_i + 1) + ']/td[30]//text()')[0]
-			rank_pts = team_stats.xpath('//*[@id="stats"]/tbody/tr[' + str(year_i + 1) + ']/td[33]//text()')[0]
-			team_stat_ranks = {'3pa':rank_3pa,
-							   '3pp':rank_3pp,
-							   '2pa':rank_2pa,
-							   '2pp':rank_2pp,
-							   'fta':rank_fta,
-							   'ftp':rank_ftp,
-							   'orb':rank_orb,
-							   'drb':rank_drb,
-							   'ast':rank_ast,
-							   'stl':rank_stl,
-							   'blk':rank_blk,
-							   'pts':rank_pts}
+for y, f in enumerate(team_stats_files):
+	with open(f, newline='') as team_totals_file:
+		stats_headers = []
+		team_stat_rows = csv.reader(team_totals_file, delimiter=',')
+		team_stat_totals = {}
+		for row_index, stat_row in enumerate(team_stat_rows):
+			if row_index == 0:
+				stats_headers = stat_row
+			else:
+				team_abbr = team_abbr_lookup.get(stat_row[1])
+				team_stat_totals[team_abbr] = {stats_headers[1]: stat_row[1],
+											   stats_headers[2]: stat_row[2],
+											   stats_headers[3]: stat_row[3],
+											   stats_headers[4]: stat_row[4],
+											   stats_headers[5]: stat_row[5],
+											   stats_headers[6]: stat_row[6],
+											   stats_headers[7]: stat_row[7],
+											   stats_headers[8]: stat_row[8],
+											   stats_headers[9]: stat_row[9],
+											   stats_headers[10]: stat_row[10],
+											   stats_headers[11]: stat_row[11],
+											   stats_headers[12]: stat_row[12],
+											   stats_headers[13]: stat_row[13]}
+		team_stats_data[prev_year-y]['totals'] = team_stat_totals
+	team_totals_file.close()
 
-			team_total_stats_url = nba_url + cfg.get("Teams", "TeamPath") + "/" + team_abbr + cfg.get("Teams", "TeamStatsPage")
-			with urllib.request.urlopen(team_total_stats_url) as totals_html:
-				team_totals = et.parse(totals_html, parser)
-			total_3pa = team_totals.xpath('//*[@id="stats"]/tbody/tr[' + str(year_i + 1) + ']/td[17]//text()')[0]
-			total_3pp = team_totals.xpath('//*[@id="stats"]/tbody/tr[' + str(year_i + 1) + ']/td[18]//text()')[0]
-			total_2pa = team_totals.xpath('//*[@id="stats"]/tbody/tr[' + str(year_i + 1) + ']/td[20]//text()')[0]
-			total_2pp = team_totals.xpath('//*[@id="stats"]/tbody/tr[' + str(year_i + 1) + ']/td[21]//text()')[0]
-			total_fta = team_totals.xpath('//*[@id="stats"]/tbody/tr[' + str(year_i + 1) + ']/td[23]//text()')[0]
-			total_ftp = team_totals.xpath('//*[@id="stats"]/tbody/tr[' + str(year_i + 1) + ']/td[24]//text()')[0]
-			total_orb = team_totals.xpath('//*[@id="stats"]/tbody/tr[' + str(year_i + 1) + ']/td[25]//text()')[0]
-			total_drb = team_totals.xpath('//*[@id="stats"]/tbody/tr[' + str(year_i + 1) + ']/td[26]//text()')[0]
-			total_ast = team_totals.xpath('//*[@id="stats"]/tbody/tr[' + str(year_i + 1) + ']/td[28]//text()')[0]
-			total_stl = team_totals.xpath('//*[@id="stats"]/tbody/tr[' + str(year_i + 1) + ']/td[29]//text()')[0]
-			total_blk = team_totals.xpath('//*[@id="stats"]/tbody/tr[' + str(year_i + 1) + ']/td[30]//text()')[0]
-			total_pts = team_totals.xpath('//*[@id="stats"]/tbody/tr[' + str(year_i + 1) + ']/td[33]//text()')[0]
-			team_stat_totals = {'3pa': total_3pa,
-								'3pp': total_3pp,
-								'2pa': total_2pa,
-								'2pp': total_2pp,
-								'fta': total_fta,
-								'ftp': total_ftp,
-								'orb': total_orb,
-								'drb': total_drb,
-								'ast': total_ast,
-								'stl': total_stl,
-								'blk': total_blk,
-								'pts': total_pts}
-			player_name = draft_tree.xpath('//*[@id="stats"]/tbody/tr[' + str(pick_num) + ']/td[3]/a/text()')[0]
-			
-			team_info = {'name': team_name,
-						 'abbr': team_abbr,
-						 'team_ranks': team_stat_ranks,
-						 'team_stats': team_stat_totals,
-						 'player': player_name}
-			draft_order.append(team_info)
-		draft['board'] = draft_order
-		drafts.append(draft)
-	return drafts
+for key in team_stats_data:
+	teams_data.append({'year': key, 'stats': team_stats_data.get(key)})
+drafts_data.append({'players': players_data, 'teams': teams_data})
+
+print(drafts_data)
+return drafts_data
+
+
