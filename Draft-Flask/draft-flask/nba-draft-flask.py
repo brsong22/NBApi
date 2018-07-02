@@ -31,7 +31,7 @@ def get_drafts(year):
 	draft = [draft for draft in drafts if draft['year'] == year]
 	if len(draft) == 0:
 		abort(404)
-	return jsonify({'draft': draft[0]})
+	return jsonify({'draft': draft[0].get('teams')})
 
 @app.route('/nba/draft/api/drafts/<int:year>/<int:pick>', methods=['GET'])
 def get_draft_pick(year, pick):

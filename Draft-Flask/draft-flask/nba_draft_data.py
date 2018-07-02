@@ -60,7 +60,7 @@ def get_draft_data():
 	for i in range(5):
 		year_i = prev_year - i
 		draft_i = {}
-		draft_i[year_i] = {}
+		draft_i['year'] = year_i
 		file_year = str(year_i)
 		player_stat_file = '[' + file_year +'] Drafted Player Stats.csv'
 		team_stat_rank_file = '[' + file_year + '] Team Draft Order and Stats Rankings.csv'
@@ -75,21 +75,22 @@ def get_draft_data():
 				if row_index == 0:
 					stats_headers = stat_row
 				else:
-					player_stat_totals[row_index] = {stats_headers[1]: stat_row[1],
-													 stats_headers[2]: stat_row[2],
-													 stats_headers[3]: stat_row[3],
-													 stats_headers[4]: stat_row[4],
-													 stats_headers[5]: stat_row[5],
-													 stats_headers[6]: stat_row[6],
-													 stats_headers[7]: stat_row[7],
-													 stats_headers[8]: stat_row[8],
-													 stats_headers[9]: stat_row[9],
-													 stats_headers[10]: stat_row[10],
-													 stats_headers[11]: stat_row[11],
-													 stats_headers[12]: stat_row[12],
-													 stats_headers[13]: stat_row[13]}
+					player_stat_totals[row_index] = {}
+					player_stat_totals[row_index]['name'] = stat_row[1]
+					player_stat_totals[row_index]['stats'] = {stats_headers[2]: stat_row[2],
+															  stats_headers[3]: stat_row[3],
+															  stats_headers[4]: stat_row[4],
+															  stats_headers[5]: stat_row[5],
+															  stats_headers[6]: stat_row[6],
+															  stats_headers[7]: stat_row[7],
+															  stats_headers[8]: stat_row[8],
+															  stats_headers[9]: stat_row[9],
+															  stats_headers[10]: stat_row[10],
+															  stats_headers[11]: stat_row[11],
+															  stats_headers[12]: stat_row[12],
+															  stats_headers[13]: stat_row[13]}
 		player_file.close()
-		draft_i[year_i]['players'] = player_stat_totals
+		draft_i['players'] = player_stat_totals
 
 		team_stats_data = {}
 		#get team stats ranks for each draft
@@ -104,7 +105,7 @@ def get_draft_data():
 					stats_headers = stat_row
 				else:
 					team_abbr = team_abbr_lookup.get(stat_row[1])
-					player_pick = draft_i[year_i]['players'][row_index].get('name')
+					player_pick = draft_i['players'][row_index].get('name')
 					draft_order[row_index] = {'team': stat_row[1], 'abbr': team_abbr, 'player': player_pick}
 					team_stat_ranks[team_abbr] = {stats_headers[1]: stat_row[1],
 												  stats_headers[2]: stat_row[2],
@@ -120,7 +121,7 @@ def get_draft_data():
 												  stats_headers[12]: stat_row[12],
 												  stats_headers[13]: stat_row[13]}
 		team_rank_file.close()
-		draft_i[year_i]['order'] = draft_order
+		draft_i['order'] = draft_order
 
 		#get team stats totals for each draft
 		#{abbr:{stats}}
@@ -146,18 +147,22 @@ def get_draft_data():
 												   stats_headers[11]: stat_row[11],
 												   stats_headers[12]: stat_row[12],
 												   stats_headers[13]: stat_row[13]}
-			#add stats totals dict to team stats dict
 		team_totals_file.close()
 
 		team_stats = {}
 		for key in team_stat_ranks:
 			team_stats[key] = {}
-			team_stats[key]['ranks'] = team_stat_ranks.get(key)
-			team_stats[key]['totals'] = team_stat_totals.get(key)
-		draft_i[year_i]['teams'] = team_stats
+			team_stats[key]['ranks'] = {}
+			team_stats[key]['totals'] = {}
+			team_stats[key]['name'] = team_stat_ranks[key].get('name')
+			for stats in team_stat_ranks.get(key):
+				if not stats == 'name':
+					team_stats[key]['ranks'][stats] = team_stat_ranks[key].get(stats)
+					team_stats[key]['totals'][stats] = team_stat_totals[key].get(stats)
+		draft_i['teams'] = team_stats
 		drafts_data.append(draft_i)
 
-	#drafts_data = [{year{player, order, team}}]
+	#drafts_data = [{year, players, order, teams}]
 	#	#player = {pick{name, stats}}
 	#	#order = {pick{team, abbr, player}}
 	#	#team = {abbr: ranks{stats}, totals{stats}}
