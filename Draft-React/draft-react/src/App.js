@@ -7,14 +7,11 @@ class DraftYearSelector extends Component{
 
   constructor(props){
     super(props);
-    this.state = {
-      year: new Date().getFullYear()-1
-    };
     this.handleInputChange = this.handleInputChange.bind(this);
   }
   
   handleInputChange(event){
-    this.setState({year: event.target.value});
+    this.props.onChange(event);
   }
 
   render(){
@@ -25,7 +22,7 @@ class DraftYearSelector extends Component{
     return(
       <label>
         Select Draft Year:
-        <select name="year" value={this.state.year} onChange={this.handleInputChange}>
+        <select name="year" value={this.props.year} onChange={this.handleInputChange}>
           {draftYears}
         </select>
       </label>
@@ -38,14 +35,11 @@ class DraftPickSelector extends Component{
 
   constructor(props){
     super(props);
-    this.state = {
-      pick: 1
-    };
     this.handleInputChange = this.handleInputChange.bind(this)
   }
 
   handleInputChange(event){
-    this.setState({pick: event.target.value});
+    this.props.onChange(event);
   }
 
   render(){
@@ -54,7 +48,7 @@ class DraftPickSelector extends Component{
     return(
       <label>
         Select Pick Number:
-        <select name="pick" value={this.state.pick} onChange={this.handleInputChange}>
+        <select name="pick" value={this.props.pick} onChange={this.handleInputChange}>
           {pickNumList}
         </select>
       </label>
@@ -65,19 +59,16 @@ class DraftPickSelector extends Component{
 class DraftStatsSelector extends Component{
   constructor(props){
     super(props);
-    this.state = {
-      getStats: false
-    };
     this.handleInputChange = this.handleInputChange.bind(this);
   }
   handleInputChange(event){
-    this.setState({getStats: event.target.value});
+    this.props.onChange(event);
   }
   render(){
     return(
       <label>
         Show Draft Pick Stats?:
-        <select name="getStats" value={this.state.getStats} onChange={this.handleInputChange}>
+        <select name="getStats" value={this.props.getStats} onChange={this.handleInputChange}>
           <option key="0" value="false">No</option>
           <option key="1" value="true">Yes</option>
         </select>
@@ -87,24 +78,34 @@ class DraftStatsSelector extends Component{
 }
 
 class NBApiForm extends Component{
-  constructor(){
-    super();
+  constructor(props){
+    super(props);
+    this.state = {
+      year: 2017,
+      pick: 1,
+      getStats: false
+    };
+    this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  handleInputChange(event){
+    this.setState({[event.target.name]: event.target.value});
   }
   handleSubmit(event){
     event.preventDefault();
-    const data = new FormData(event.target);
-    console.log(data);
+    console.log(this.state.year);
+    console.log(this.state.pick);
+    console.log(this.state.getStats);
   }
   render(){
     return(
       <div>
         <form onSubmit={this.handleSubmit}>
-          <DraftYearSelector/>
+          <DraftYearSelector year={this.state.year} onChange={this.handleInputChange}/>
           <br/>
-          <DraftPickSelector/>
+          <DraftPickSelector pick={this.state.pick} onChange={this.handleInputChange}/>
           <br/>
-          <DraftStatsSelector/>
+          <DraftStatsSelector getStats={this.state.getStats} onChange={this.handleInputChange}/>
           <br/>
           <input type="submit" value="Get Draft Info"/>
         </form>
