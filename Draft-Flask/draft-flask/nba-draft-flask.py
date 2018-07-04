@@ -2,8 +2,10 @@ import nba_draft_data as draft
 from flask import Flask, jsonify
 from flask import abort
 from flask import make_response
+from flask_cors import CORS
 
 app = Flask(__name__)
+cors = CORS(app, resources={r"/nba/draft/api/drafts/*": {"origins": "http://localhost:3000"}})
 
 draft_years = [
 	{
@@ -23,10 +25,12 @@ draft_years = [
 drafts = draft.get_draft_data()
 
 @app.errorhandler(404)
+# @cross_origin()
 def not_found(error):
 	return make_response(jsonify({'error': 'Not Found'}), 404)
 
 @app.route('/nba/draft/api/drafts/<int:year>', methods=['GET'])
+# @cross_origin()
 def get_drafts(year):
 	draft = [draft for draft in drafts if draft['year'] == year]
 	if len(draft) == 0:
@@ -34,12 +38,14 @@ def get_drafts(year):
 	return jsonify(draft[0])
 
 @app.route('/nba/draft/api/drafts/<int:year>/<int:pick>', methods=['GET'])
+# @cross_origin()
 def get_draft_pick(year, pick):
 	draft = get_drafts(year).get_json()
 	pick_stats = draft['order'].get(str(pick))
 	return jsonify(pick_stats)
 
 @app.route('/nba/draft/api/drafts/<int:year>/<int:pick>/stats', methods=['GET'])
+# @cross_origin()
 def get_draft_pick_stats(year, pick):
 	draft = get_drafts(year).get_json()
 	player_stats = draft['players'].get(str(pick))

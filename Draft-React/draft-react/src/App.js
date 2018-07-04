@@ -49,6 +49,7 @@ class DraftPickSelector extends Component{
       <label>
         Select Pick Number:
         <select name="pick" value={this.props.pick} onChange={this.handleInputChange}>
+          <option key="-1" value="" onChange={this.handleInputChange}>    </option>
           {pickNumList}
         </select>
       </label>
@@ -83,7 +84,8 @@ class NBApiForm extends Component{
     this.state = {
       year: 2017,
       pick: 1,
-      getStats: false
+      getStats: false,
+      draftStats: {}
     };
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -96,6 +98,20 @@ class NBApiForm extends Component{
     console.log(this.state.year);
     console.log(this.state.pick);
     console.log(this.state.getStats);
+    const baseURL = 'http://localhost:5000/nba/draft/api/drafts/';
+    const draftYear = this.state.year.toString();
+    const draftPick = this.state.pick.toString();
+    const getDraftStats = this.state.getStats;
+    //if no pick # and dont show stats --> only show draft order and player picks
+    //if no pick # and show stats      --> show draft order, player picks, and stats for team and players
+    //if pick # and dont show stats    --> show team and player for pick #, no stats
+    //if pick # and show stats         --> show team and player for pick # w/ stats for team and player
+    fetch('http://localhost:5000/nba/draft/api/drafts/'+this.state.year.toString()+'/'+this.state.pick.toString())
+    .then(results => {
+      return results.json();
+    }).then(data => {
+      this.setState(this.state.draftStats = data);
+    });
   }
   render(){
     return(
@@ -109,6 +125,9 @@ class NBApiForm extends Component{
           <br/>
           <input type="submit" value="Get Draft Info"/>
         </form>
+        <div>
+          {JSON.stringify(this.state.draftStats)}
+        </div>
       </div>
     );
   }
