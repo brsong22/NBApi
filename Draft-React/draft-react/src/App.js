@@ -2,6 +2,13 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+function handleErrors(response){
+  if(!response.ok){
+    throw Error(response.statusText);
+  }
+  return response.json();
+}
+
 class DraftYearSelector extends Component{
   static currentYear = new Date().getFullYear();
 
@@ -49,7 +56,7 @@ class DraftPickSelector extends Component{
       <label>
         Select Pick Number:
         <select name="pick" value={this.props.pick} onChange={this.handleInputChange}>
-          <option key="-1" value="" onChange={this.handleInputChange}>    </option>
+          <option key="-1" value="" onChange={this.handleInputChange}>&nbsp;</option>
           {pickNumList}
         </select>
       </label>
@@ -85,35 +92,44 @@ class NBApiForm extends Component{
       year: 2017,
       pick: 1,
       getStats: false,
-      draftStats: {}
+      draftStats: {},
+      error: false
     };
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
   handleInputChange(event){
-    this.setState({[event.target.name]: event.target.value});
+    const name = event.target.name;
+    let value = event.target.value;
+    value = (name === 'getStats') ? (value === 'true') : value; //boolean value becomes string; cast to boolean
+    this.setState({[name]: value});
   }
   handleSubmit(event){
     event.preventDefault();
-    console.log(this.state.year);
-    console.log(this.state.pick);
-    console.log(this.state.getStats);
-    const baseURL = 'http://localhost:5000/nba/draft/api/drafts/';
+
     const draftYear = this.state.year.toString();
     const draftPick = this.state.pick.toString();
     const getDraftStats = this.state.getStats;
+    let apiEndpoint = 'http://localhost:5000/nba/draft/api/drafts/' + draftYear;
+    apiEndpoint = draftPick !== "" ? apiEndpoint + "/" + draftPick : apiEndpoint;
+    apiEndpoint = getDraftStats ? apiEndpoint + "/stats" : apiEndpoint;
+
     //if no pick # and dont show stats --> only show draft order and player picks
     //if no pick # and show stats      --> show draft order, player picks, and stats for team and players
     //if pick # and dont show stats    --> show team and player for pick #, no stats
     //if pick # and show stats         --> show team and player for pick # w/ stats for team and player
-    fetch('http://localhost:5000/nba/draft/api/drafts/'+this.state.year.toString()+'/'+this.state.pick.toString())
-    .then(results => {
-      return results.json();
-    }).then(data => {
-      this.setState(this.state.draftStats = data);
+    console.log(apiEndpoint)
+    fetch(apiEndpoint)
+    .then(handleErrors)
+    .then(data => {
+      this.setState({draftStats: data, error: false});
+    })
+    .catch(error => {
     });
   }
   render(){
+    const stats = ((Object.keys(this.state.draftStats).length === 0 && this.state.draftStats.constructor === Object) ?
+      "" : JSON.stringify(this.state.draftStats));
     return(
       <div>
         <form onSubmit={this.handleSubmit}>
@@ -126,7 +142,7 @@ class NBApiForm extends Component{
           <input type="submit" value="Get Draft Info"/>
         </form>
         <div>
-          {JSON.stringify(this.state.draftStats)}
+          {this.state.error ? "error" : stats}
         </div>
       </div>
     );

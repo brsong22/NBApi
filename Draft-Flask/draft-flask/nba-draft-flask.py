@@ -25,29 +25,29 @@ draft_years = [
 drafts = draft.get_draft_data()
 
 @app.errorhandler(404)
-# @cross_origin()
 def not_found(error):
 	return make_response(jsonify({'error': 'Not Found'}), 404)
 
 @app.route('/nba/draft/api/drafts/<int:year>', methods=['GET'])
-# @cross_origin()
-def get_drafts(year):
+def get_draft(year):
+	draft = get_draft_stats(year).get_json()
+	return jsonify(draft.get('order'))
+
+@app.route('/nba/draft/api/drafts/<int:year>/stats', methods=['GET'])
+def get_draft_stats(year):
 	draft = [draft for draft in drafts if draft['year'] == year]
 	if len(draft) == 0:
 		abort(404)
 	return jsonify(draft[0])
 
 @app.route('/nba/draft/api/drafts/<int:year>/<int:pick>', methods=['GET'])
-# @cross_origin()
 def get_draft_pick(year, pick):
-	draft = get_drafts(year).get_json()
+	draft = get_draft_stats(year).get_json()
 	pick_stats = draft['order'].get(str(pick))
 	return jsonify(pick_stats)
 
 @app.route('/nba/draft/api/drafts/<int:year>/<int:pick>/stats', methods=['GET'])
-# @cross_origin()
 def get_draft_pick_stats(year, pick):
-	draft = get_drafts(year).get_json()
 	player_stats = draft['players'].get(str(pick))
 	team_abbr = get_draft_pick(year, pick).get_json().get('abbr')
 	team_stats = draft['teams'].get(team_abbr)
