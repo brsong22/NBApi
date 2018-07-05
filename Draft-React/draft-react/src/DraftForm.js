@@ -1,14 +1,4 @@
 import React, { Component } from 'react';
-import DraftStats from './DraftStats';
-import logo from './logo.svg';
-import './App.css';
-
-function handleErrors(response){
-  if(!response.ok){
-    throw Error(response.statusText);
-  }
-  return response.json();
-}
 
 class DraftYearSelector extends Component{
   static currentYear = new Date().getFullYear();
@@ -86,19 +76,16 @@ class DraftStatsSelector extends Component{
   }
 }
 
-class NBApiForm extends Component{
+class DraftForm extends Component{
   constructor(props){
     super(props);
     this.state = {
       year: 2017,
       pick: 1,
-      getStats: false,
-      draftStats: {},
-      showStats: false,
-      error: false
+      getStats: false
     };
     this.handleInputChange = this.handleInputChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleFormSubmit = this.handleFormSubmit.bind(this);
   }
   handleInputChange(event){
     const name = event.target.name;
@@ -106,31 +93,7 @@ class NBApiForm extends Component{
     value = (name === 'getStats') ? (value === 'true') : value; //boolean value becomes string; cast to boolean
     this.setState({[name]: value});
   }
-  handleSubmit(event){
-    event.preventDefault();
-
-    const draftYear = this.state.year.toString();
-    const draftPick = this.state.pick.toString();
-    const getDraftStats = this.state.getStats;
-    let apiEndpoint = 'http://localhost:5000/nba/draft/api/drafts/' + draftYear;
-    apiEndpoint = draftPick !== "" ? apiEndpoint + "/" + draftPick : apiEndpoint;
-    apiEndpoint = getDraftStats ? apiEndpoint + "/stats" : apiEndpoint;
-
-    //if no pick # and dont show stats --> only show draft order and player picks
-    //if no pick # and show stats      --> show draft order, player picks, and stats for team and players
-    //if pick # and dont show stats    --> show team and player for pick #, no stats
-    //if pick # and show stats         --> show team and player for pick # w/ stats for team and player
-    console.log(apiEndpoint)
-    fetch(apiEndpoint)
-    .then(handleErrors)
-    .then(data => {
-      this.setState({draftStats: data, showStats: true, error: false});
-    })
-    .catch(error => {
-      this.setState({error: true});
-    });
-  }
-  render(){
+  handleFormSubmit(event){
     let display;
     const draftPick = this.state.pick.toString();
     const getStats = this.state.getStats;
@@ -150,9 +113,14 @@ class NBApiForm extends Component{
         display = 4;
       }
     }
+    let state = this.state;
+    state['display'] = display;
+    this.props.handleFormSubmit(event, state);
+  }
+  render(){
     return(
       <div>
-        <form onSubmit={this.handleSubmit}>
+        <form onSubmit={this.handleFormSubmit}>
           <DraftYearSelector year={this.state.year} onChange={this.handleInputChange}/>
           <br/>
           <DraftPickSelector pick={this.state.pick} onChange={this.handleInputChange}/>
@@ -161,12 +129,8 @@ class NBApiForm extends Component{
           <br/>
           <input type="submit" value="Get Draft Info"/>
         </form>
-        <div>
-          {this.state.error ? "error" : this.state.showStats ? <DraftStats year={this.state.year} pick={this.state.pick} stats={this.state.draftStats} display={display}/> : <div/>}
-        </div>
       </div>
     );
   }
 }
-
-export default NBApiForm;
+export default DraftForm;

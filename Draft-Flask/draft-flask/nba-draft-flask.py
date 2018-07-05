@@ -52,6 +52,7 @@ def get_draft_pick_stats(year, pick):
 	player_stats = draft['players'].get(str(pick))
 	team_abbr = get_draft_pick(year, pick).get_json().get('abbr')
 	team_stats = draft['teams'].get(team_abbr)
+	team_stats['abbr'] = team_abbr
 	draft_player_team_stats = {'player': player_stats, 'team': team_stats}
 	return jsonify(draft_player_team_stats)
 

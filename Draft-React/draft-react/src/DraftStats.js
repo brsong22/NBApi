@@ -22,52 +22,70 @@ class TeamDisplay extends Component{
 
 class StatsTable extends Component{
 	render(){
-		console.log(Object.keys(this.props.stats));
-		const statsHeaders = Object.keys(this.props.stats).map(statName => <th key="statsName">{statName}</th>);
-		const stats = Object.values(this.props.stats).map(statVal => <td>{statVal}</td>);
-		return(
+		const statsHeaders = Object.keys(this.props.playerStats).map((statName, index) => <th key={index}>{statName}</th>);
+		const playerName = [<td key="0">{this.props.player}</td>];
+		const playerStatsArray = Object.values(this.props.playerStats).map((statVal, index) => <td key={index+1}>{statVal}</td>);
+		playerName.push(...playerStatsArray);
+		const playerStats = statsHeaders.length > 0 ? playerName : [];
+		const teamAbbr = [<td key="0">{this.props.team}</td>];
+		const teamStatsArray = Object.values(this.props.teamStats).map((statVal, index) => <td key={index+1}>{statVal}</td>);
+		teamAbbr.push(...teamStatsArray);
+		const teamStats = statsHeaders.length > 0 ? teamAbbr : [];
+		return( 
 			<div>
 				<table>
-					<tr>
-						{statsHeaders}
-					</tr>
-					<tr>
-						{stats}
-					</tr>
+					<tbody>
+						<tr>
+							<th>&nbsp;</th>
+							{statsHeaders}
+						</tr>
+						<tr>
+							{playerStats}
+						</tr>
+						<tr>
+							{teamStats}
+						</tr>
+					</tbody>
 				</table>
 			</div>
 		);
 	}
 }
+
 class StatsDisplay extends Component{
 	render(){
 		const display = this.props.display;
 		let player;
 		let team;
+		let teamAbbr;
 		let playerStats;
 		let teamStats;
 		if(display === 1){
-			player = <PlayerDisplay player={this.props.stats['player']}/>;
-			team = <TeamDisplay abbr={this.props.stats['abbr']} team={this.props.stats['team']}/>;
+			player = this.props.stats['player'];
+			team =this.props.stats['team'];
+			teamAbbr = this.props.stats['abbr'];
+			playerStats = {};
+			teamStats = {};
 		}
 		else if(display === 2){
-			player = <PlayerDisplay player={this.props.stats['player']['player']}/>;
-			team = <TeamDisplay abbr={this.props.stats['team']['abbr']} team={this.props.stats['team']['team']}/>;
-			playerStats = <StatsTable stats={this.props.stats['player']['stats']}/>;
-			teamStats = <StatsTable stats={this.props.stats['team']['totals']}/>;
+			player = this.props.stats['player']['player'];
+			team = this.props.stats['team']['team'];
+			teamAbbr = this.props.stats['team']['abbr'];
+			playerStats = this.props.stats['player']['stats'];
+			teamStats = this.props.stats['team']['totals'];
 		}
 		return(
 			<div>
-				<div>{player}</div>
-				<div>{team}</div>
+				<div><PlayerDisplay player={player}/></div>
+				<div><TeamDisplay abbr={teamAbbr} team={team}/></div>
 				<br/>
-				<div>{playerStats}</div>
-				<div>{teamStats}</div>
+				<div>
+					<StatsTable player={player} playerStats={playerStats} team={teamAbbr} teamStats={teamStats}/>
+				</div>
 			</div>
 		);
 	}
 }
-
 
 class DraftStats extends Component{
 	render(){
@@ -75,12 +93,12 @@ class DraftStats extends Component{
 			<div>
 				<div>
 					<br/><br/>
-					<strong>Draft Year</strong>: {this.props.year}
+					<strong>Draft Year</strong>: {this.props.stats.year}
 					<br/>
-					<strong>Pick No.</strong>: {this.props.pick}
+					<strong>Pick No.</strong>: {this.props.stats.pick}
 					<br/><br/>
 				</div>
-				<StatsDisplay display={this.props.display} stats={this.props.stats}/>
+				<StatsDisplay display={this.props.stats.display} stats={this.props.stats}/>
 			</div>
 		);
 	}
