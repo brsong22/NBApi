@@ -48,10 +48,12 @@ def get_draft_pick(year, pick):
 
 @app.route('/nba/draft/api/drafts/<int:year>/<int:pick>/stats', methods=['GET'])
 def get_draft_pick_stats(year, pick):
+	draft = get_draft_stats(year).get_json()
 	player_stats = draft['players'].get(str(pick))
 	team_abbr = get_draft_pick(year, pick).get_json().get('abbr')
 	team_stats = draft['teams'].get(team_abbr)
-	return jsonify(player_stats, team_stats)
+	draft_player_team_stats = {'player': player_stats, 'team': team_stats}
+	return jsonify(draft_player_team_stats)
 
 if __name__ == '__main__':
 	app.run(debug=True)

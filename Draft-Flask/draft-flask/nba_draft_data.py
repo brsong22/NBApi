@@ -76,7 +76,7 @@ def get_draft_data():
 					stats_headers = stat_row
 				else:
 					player_stat_totals[row_index] = {}
-					player_stat_totals[row_index]['name'] = stat_row[1]
+					player_stat_totals[row_index]['player'] = stat_row[1]
 					player_stat_totals[row_index]['stats'] = {stats_headers[2]: stat_row[2],
 															  stats_headers[3]: stat_row[3],
 															  stats_headers[4]: stat_row[4],
@@ -105,9 +105,9 @@ def get_draft_data():
 					stats_headers = stat_row
 				else:
 					team_abbr = team_abbr_lookup.get(stat_row[1])
-					player_pick = draft_i['players'][row_index].get('name')
+					player_pick = draft_i['players'][row_index].get('player')
 					draft_order[row_index] = {'team': stat_row[1], 'abbr': team_abbr, 'player': player_pick}
-					team_stat_ranks[team_abbr] = {stats_headers[1]: stat_row[1],
+					team_stat_ranks[team_abbr] = {'team ' + stats_headers[1]: stat_row[1],
 												  stats_headers[2]: stat_row[2],
 												  stats_headers[3]: stat_row[3],
 												  stats_headers[4]: stat_row[4],
@@ -134,7 +134,7 @@ def get_draft_data():
 					stats_headers = stat_row
 				else:
 					team_abbr = team_abbr_lookup.get(stat_row[1])
-					team_stat_totals[team_abbr] = {stats_headers[1]: stat_row[1],
+					team_stat_totals[team_abbr] = {'team ' + stats_headers[1]: stat_row[1],
 												   stats_headers[2]: stat_row[2],
 												   stats_headers[3]: stat_row[3],
 												   stats_headers[4]: stat_row[4],
@@ -154,9 +154,9 @@ def get_draft_data():
 			team_stats[key] = {}
 			team_stats[key]['ranks'] = {}
 			team_stats[key]['totals'] = {}
-			team_stats[key]['name'] = team_stat_ranks[key].get('name')
+			team_stats[key]['team'] = team_stat_ranks[key].get('team name')
 			for stats in team_stat_ranks.get(key):
-				if not stats == 'name':
+				if not stats == 'team name':
 					team_stats[key]['ranks'][stats] = team_stat_ranks[key].get(stats)
 					team_stats[key]['totals'][stats] = team_stat_totals[key].get(stats)
 		draft_i['teams'] = team_stats

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import DraftStats from './DraftStats';
 import logo from './logo.svg';
 import './App.css';
 
@@ -93,6 +94,7 @@ class NBApiForm extends Component{
       pick: 1,
       getStats: false,
       draftStats: {},
+      showStats: false,
       error: false
     };
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -122,14 +124,32 @@ class NBApiForm extends Component{
     fetch(apiEndpoint)
     .then(handleErrors)
     .then(data => {
-      this.setState({draftStats: data, error: false});
+      this.setState({draftStats: data, showStats: true, error: false});
     })
     .catch(error => {
+      this.setState({error: true});
     });
   }
   render(){
-    const stats = ((Object.keys(this.state.draftStats).length === 0 && this.state.draftStats.constructor === Object) ?
-      "" : JSON.stringify(this.state.draftStats));
+    let display;
+    const draftPick = this.state.pick.toString();
+    const getStats = this.state.getStats;
+    if(draftPick !== ""){
+      if(!getStats){
+        display = 1;
+      }
+      else{
+        display = 2;
+      }
+    }
+    else{
+      if(!getStats){
+        display = 3;
+      }
+      else{
+        display = 4;
+      }
+    }
     return(
       <div>
         <form onSubmit={this.handleSubmit}>
@@ -142,7 +162,7 @@ class NBApiForm extends Component{
           <input type="submit" value="Get Draft Info"/>
         </form>
         <div>
-          {this.state.error ? "error" : stats}
+          {this.state.error ? "error" : this.state.showStats ? <DraftStats year={this.state.year} pick={this.state.pick} stats={this.state.draftStats} display={display}/> : <div/>}
         </div>
       </div>
     );
