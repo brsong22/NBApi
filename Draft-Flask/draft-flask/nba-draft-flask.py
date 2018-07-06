@@ -29,7 +29,7 @@ def not_found(error):
 	return make_response(jsonify({'error': 'Not Found'}), 404)
 
 @app.route('/nba/draft/api/drafts/<int:year>/<int:pick>', methods=['GET'])
-#"display-1" data
+#"display-1" data DEPRECATE
 def get_draft_pick(year, pick):
 	draft = get_draft_stats(year).get_json()
 	pick_stats = draft['order'].get(str(pick))
@@ -37,7 +37,7 @@ def get_draft_pick(year, pick):
 	return jsonify(pick_stats)
 
 @app.route('/nba/draft/api/drafts/<int:year>/<int:pick>/stats', methods=['GET'])
-#"display-2" data
+#"display-2" data DEPRECATE
 def get_draft_pick_stats(year, pick):
 	draft = get_draft_stats(year).get_json()
 	player_stats = draft['players'].get(str(pick))
@@ -49,7 +49,7 @@ def get_draft_pick_stats(year, pick):
 	return jsonify(draft_player_team_stats)
 
 @app.route('/nba/draft/api/drafts/<int:year>', methods=['GET'])
-#"display-3" data
+#"display-3" data DEPRECATE
 def get_draft(year):
 	draft = get_draft_stats(year).get_json()
 	# print(draft.get('order'))

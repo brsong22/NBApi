@@ -80,9 +80,7 @@ class DraftForm extends Component{
   constructor(props){
     super(props);
     this.state = {
-      year: 2017,
-      pick: 1,
-      getStats: false
+      year: 2017
     };
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
@@ -90,42 +88,16 @@ class DraftForm extends Component{
   handleInputChange(event){
     const name = event.target.name;
     let value = event.target.value;
-    value = (name === 'getStats') ? (value === 'true') : value; //boolean value becomes string; cast to boolean
     this.setState({[name]: value});
   }
   handleFormSubmit(event){
-    let display;
-    const draftPick = this.state.pick.toString();
-    const getStats = this.state.getStats;
-    if(draftPick !== ""){
-      if(!getStats){
-        display = 1;
-      }
-      else{
-        display = 2;
-      }
-    }
-    else{
-      if(!getStats){
-        display = 3;
-      }
-      else{
-        display = 4;
-      }
-    }
-    let state = this.state;
-    state['display'] = display;
-    this.props.handleFormSubmit(event, state);
+    this.props.handleFormSubmit(event, this.state);
   }
   render(){
     return(
       <div>
         <form onSubmit={this.handleFormSubmit}>
           <DraftYearSelector year={this.state.year} onChange={this.handleInputChange}/>
-          <br/>
-          <DraftPickSelector pick={this.state.pick} onChange={this.handleInputChange}/>
-          <br/>
-          <DraftStatsSelector getStats={this.state.getStats} onChange={this.handleInputChange}/>
           <br/>
           <input type="submit" value="Get Draft Info"/>
         </form>
