@@ -23,7 +23,7 @@ class NBApi extends Component{
   }
   handleFormSubmit(event, state){
     event.preventDefault();
-    this.setState({year: state.year,pick: state.pick, getStats: state.getStats});
+    this.setState({year: state.year, pick: state.pick, getStats: state.getStats, display: state.display});
 
     const draftYear = state.year.toString();
     const draftPick = state.pick.toString();
@@ -36,13 +36,11 @@ class NBApi extends Component{
     //if no pick # and show stats      --> show draft order, player picks, and stats for team and players
     //if pick # and dont show stats    --> show team and player for pick #, no stats
     //if pick # and show stats         --> show team and player for pick # w/ stats for team and player
-    console.log(apiEndpoint);
     fetch(apiEndpoint)
     .then(handleErrors)
     .then(data => {
       data['year'] = state.year;
       data['pick'] = state.pick;
-      data['display'] = state.display;
       this.setState({draftStats: data, showStats: true});
     })
     .catch(error => {
@@ -53,7 +51,7 @@ class NBApi extends Component{
     return(
       <div>
         <DraftForm handleFormSubmit={this.handleFormSubmit}/>
-        {this.state.showStats ? <DraftStats stats={this.state.draftStats} display={this.state.display}/> : <div/>}
+        {this.state.showStats ? <DraftStats stats={this.state.draftStats} display={this.state.display} getStats={this.state.getStats}/> : <div/>}
       </div>
     );
   }

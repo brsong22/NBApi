@@ -28,25 +28,16 @@ drafts = draft.get_draft_data()
 def not_found(error):
 	return make_response(jsonify({'error': 'Not Found'}), 404)
 
-@app.route('/nba/draft/api/drafts/<int:year>', methods=['GET'])
-def get_draft(year):
-	draft = get_draft_stats(year).get_json()
-	return jsonify(draft.get('order'))
-
-@app.route('/nba/draft/api/drafts/<int:year>/stats', methods=['GET'])
-def get_draft_stats(year):
-	draft = [draft for draft in drafts if draft['year'] == year]
-	if len(draft) == 0:
-		abort(404)
-	return jsonify(draft[0])
-
 @app.route('/nba/draft/api/drafts/<int:year>/<int:pick>', methods=['GET'])
+#"display-1" data
 def get_draft_pick(year, pick):
 	draft = get_draft_stats(year).get_json()
 	pick_stats = draft['order'].get(str(pick))
+	# print(pick_stats)
 	return jsonify(pick_stats)
 
 @app.route('/nba/draft/api/drafts/<int:year>/<int:pick>/stats', methods=['GET'])
+#"display-2" data
 def get_draft_pick_stats(year, pick):
 	draft = get_draft_stats(year).get_json()
 	player_stats = draft['players'].get(str(pick))
@@ -54,7 +45,28 @@ def get_draft_pick_stats(year, pick):
 	team_stats = draft['teams'].get(team_abbr)
 	team_stats['abbr'] = team_abbr
 	draft_player_team_stats = {'player': player_stats, 'team': team_stats}
+	# print(draft_player_team_stats)
 	return jsonify(draft_player_team_stats)
+
+@app.route('/nba/draft/api/drafts/<int:year>', methods=['GET'])
+#"display-3" data
+def get_draft(year):
+	draft = get_draft_stats(year).get_json()
+	# print(draft.get('order'))
+	return jsonify(draft.get('order'))
+
+@app.route('/nba/draft/api/drafts/<int:year>/stats', methods=['GET'])
+#"display-4" data
+def get_draft_stats(year):
+	draft = [draft for draft in drafts if draft['year'] == year]
+	if len(draft) == 0:
+		abort(404)
+	# print(draft[0])
+	return jsonify(draft[0])
+
+
+
+
 
 if __name__ == '__main__':
 	app.run(debug=True)
