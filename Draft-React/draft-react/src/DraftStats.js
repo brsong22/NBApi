@@ -21,7 +21,7 @@ class PickListDisplay extends Component{
 	}
 	render(){
 		return(
-			<tr onClick={this.handleRowClick}>
+			<tr onClick={this.handleRowClick} className={this.props.className}>
 				<PickDisplay pick={this.props.pick}/>
 				<TeamDisplay pick={this.props.pick} abbr={this.props.abbr} team={this.props.team}/>
 				<PlayerDisplay pick={this.props.pick} player={this.props.player}/>
@@ -84,7 +84,7 @@ class StatsTable extends Component{
 class StatsDisplay extends Component{
 	render(){
 		return(
-			<div>
+			<div className="draft-container" id="draft-stats-container">
 				<table className="stats-table" id="draft-stats">
 					<tbody>
 						<StatsTableHeaders headers={["Stats", this.props.stats.order[this.props.pick].abbr + " Rank", this.props.stats.order[this.props.pick].abbr + " Total", this.props.stats.players[this.props.pick].player]}/>
@@ -98,19 +98,32 @@ class StatsDisplay extends Component{
 }
 
 class DraftList extends Component{
+	constructor(props){
+		super(props);
+		this.state = {
+			selectedRow: this.props.pick
+		}
+		this.handleRowClick = this.handleRowClick.bind(this);
+	}
+	handleRowClick(event, pick){
+		this.setState({selectedRow: pick});
+		this.props.onClick(event, pick);
+	}
 	render(){
 		const stats = this.props.stats;
 		const headers = ["Pick", "Team", "Player"];
 		const pickList = Object.keys(stats).map((pick) => 
-			<PickListDisplay key={pick} pick={pick} abbr={stats[pick].abbr} team={stats[pick].team} player={stats[pick].player} onClick={this.props.onClick}/>);
-
+			<PickListDisplay key={pick} pick={pick} abbr={stats[pick].abbr} team={stats[pick].team} player={stats[pick].player} 
+				onClick={this.handleRowClick} className={this.state.selectedRow.toString() === pick ? 'selected-row' : ''}/>);
 		return(
-			<table className="stats-table" id="draft-board">
-				<tbody>
-					<StatsTableHeaders headers={headers}/>
-					{pickList}
-				</tbody>
-			</table>
+			<div className="draft-container" id="draft-board-container">
+				<table className="stats-table" id="draft-board">
+					<tbody>
+						<StatsTableHeaders headers={headers}/>
+						{pickList}
+					</tbody>
+				</table>
+			</div>
 		);
 	}
 }
@@ -119,7 +132,8 @@ class DraftStats extends Component{
 	constructor(props){
 		super(props);
 		this.state = {
-			showStats: false
+			showStats: false,
+			pick: 1
 		}
 		this.handleRowClick = this.handleRowClick.bind(this);
 	}
@@ -137,10 +151,8 @@ class DraftStats extends Component{
 					<br/>
 				</div>
 				<div id="draft-list-container">
-					<DraftList stats={this.props.stats.order} onClick={this.handleRowClick}/>
-					{this.state.showStats ? 
-						<StatsDisplay headers={statsHeaders} stats={this.props.stats} pick={this.state.pick}/> : 
-						<div/>}
+					<DraftList stats={this.props.stats.order} onClick={this.handleRowClick} pick={this.state.pick}/>
+					<StatsDisplay headers={statsHeaders} stats={this.props.stats} pick={this.state.pick}/>
 				</div>
 			</div>
 		);

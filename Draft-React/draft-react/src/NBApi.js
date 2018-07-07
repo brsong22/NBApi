@@ -46,7 +46,7 @@ class NBApi extends Component{
     return(
       <div>
         <DraftForm handleFormSubmit={this.handleFormSubmit}/>
-        {this.state.showStats ? <DraftStats stats={this.state.draftStats}/> : <div/>}
+        {this.state.showStats ? <DraftStats stats={this.state.draftStats} pick={1}/> : <div/>}
       </div>
     );
   }
