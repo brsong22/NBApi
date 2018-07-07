@@ -12,9 +12,16 @@ class StatsTableHeaders extends Component{
 }
 
 class PickListDisplay extends Component{
+	constructor(props){
+		super(props);
+		this.handleRowClick = this.handleRowClick.bind(this);
+	}
+	handleRowClick(event){
+		this.props.onClick(event, this.props.pick);
+	}
 	render(){
 		return(
-			<tr>
+			<tr onClick={this.handleRowClick}>
 				<PickDisplay pick={this.props.pick}/>
 				<TeamDisplay pick={this.props.pick} abbr={this.props.abbr} team={this.props.team}/>
 				<PlayerDisplay pick={this.props.pick} player={this.props.player}/>
@@ -49,71 +56,40 @@ class PlayerDisplay extends Component{
 	}
 }
 
-
+class StatsRow extends Component{
+	render(){
+		return(
+			<tr>
+				<td>{this.props.stat}</td>
+				<td>{this.props.teamStats[this.props.stat]}</td>
+				<td>{this.props.playerStats[this.props.stat]}</td>
+			</tr>
+		);
+	}
+}
 class StatsTable extends Component{
 	render(){
-		const statsHeaders = Object.keys(this.props.playerStats).map((statName, index) => <th key={index}>{statName}</th>);
-		const playerName = [<td key="0">{this.props.player}</td>];
-		const playerStatsArray = Object.values(this.props.playerStats).map((statVal, index) => <td key={index+1}>{statVal}</td>);
-		playerName.push(...playerStatsArray);
-		const playerStats = statsHeaders.length > 0 ? playerName : [];
-		const teamAbbr = [<td key="0">{this.props.team}</td>];
-		const teamStatsArray = Object.values(this.props.teamStats).map((statVal, index) => <td key={index+1}>{statVal}</td>);
-		teamAbbr.push(...teamStatsArray);
-		const teamStats = statsHeaders.length > 0 ? teamAbbr : [];
+		const statCats = Object.keys(this.props.stats.players[1].stats);
+		console.log(statCats);
+		const player = this.props.stats.players[this.props.pick].stats;
+		const team = this.props.stats.teams[this.props.stats.order[this.props.pick].abbr].totals;
+		const statRows = statCats.map(stat => <StatsRow key={stat} stat={stat} playerStats={player} teamStats={team}/>);
+		console.log(statRows);
 		return( 
-			<div>
-				<table>
-					<tbody>
-						<tr>
-							<th>&nbsp;</th>
-							{statsHeaders}
-						</tr>
-						<tr>
-							{playerStats}
-						</tr>
-						<tr>
-							{teamStats}
-						</tr>
-					</tbody>
-				</table>
-			</div>
+			statRows
 		);
 	}
 }
 
 class StatsDisplay extends Component{
 	render(){
-		const display = this.props.display;
-		let player;
-		let team;
-		let teamAbbr;
-		let playerStats;
-		let teamStats;
-		let statsTable;
-		if(display === 1){
-			player = this.props.stats['player'];
-			team =this.props.stats['team'];
-			teamAbbr = this.props.stats['abbr'];
-			playerStats = {};
-			teamStats = {};
-			// statsTable = <StatsTable player={player} playerStats={playerStats} team={teamAbbr} teamStats={teamStats}/>;
-		}
-		else if(display === 2){
-			player = this.props.stats['player']['player'];
-			team = this.props.stats['team']['team'];
-			teamAbbr = this.props.stats['team']['abbr'];
-			playerStats = this.props.stats['player']['stats'];
-			teamStats = this.props.stats['team']['totals'];
-			statsTable = <StatsTable player={player} playerStats={playerStats} team={teamAbbr} teamStats={teamStats}/>;
-		}
-		else if(display === 3){
-
-		}
 		return(
 			<div>
 				<table>
-					<StatsTableHeaders stats={this.props.stats}/>
+					<tbody>
+						<StatsTableHeaders headers={["", this.props.stats.order[this.props.pick].abbr, this.props.stats.players[this.props.pick].player]}/>
+						<StatsTable pick={this.props.pick} stats={this.props.stats}/>
+					</tbody>
 				</table>
 				<br/>
 			</div>
@@ -124,9 +100,9 @@ class StatsDisplay extends Component{
 class DraftList extends Component{
 	render(){
 		const stats = this.props.stats;
-		const headers = Object.keys(stats[1]);
+		const headers = ["Pick", "Team", "Player"];
 		const pickList = Object.keys(stats).map((pick) => 
-			<PickListDisplay key={pick} pick={pick} abbr={stats[pick].abbr} team={stats[pick].team} player={stats[pick].player}/>);
+			<PickListDisplay key={pick} pick={pick} abbr={stats[pick].abbr} team={stats[pick].team} player={stats[pick].player} onClick={this.props.onClick}/>);
 
 		return(
 			<table>
@@ -138,16 +114,32 @@ class DraftList extends Component{
 		);
 	}
 }
+
 class DraftStats extends Component{
+	constructor(props){
+		super(props);
+		this.state = {
+			stats: this.props.stats,
+			showStats: false,
+			statsHeaders: Object.keys(this.props.stats.players[1].stats)
+		}
+		this.handleRowClick = this.handleRowClick.bind(this);
+	}
+
+	handleRowClick(event, pick){
+		console.log(pick);
+		this.setState({showStats: true, pick: pick});
+	}
 	render(){
 		return(
 			<div>
 				<div>
 					<br/><br/>
-					<div><strong>Draft Year</strong>: {this.props.stats.year}</div>
+					<div><strong>Draft Year</strong>: {this.state.stats.year}</div>
 					<br/>
 				</div>
-				<DraftList stats={this.props.stats.order}/>
+				<DraftList stats={this.state.stats.order} onClick={this.handleRowClick}/>
+				{this.state.showStats ? <StatsDisplay headers={this.state.statsHeaders} stats={this.state.stats} pick={this.state.pick}/> : <div/>}
 			</div>
 		);
 	}
