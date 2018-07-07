@@ -28,54 +28,6 @@ class DraftYearSelector extends Component{
   }
 }
 
-class DraftPickSelector extends Component{
-  static numPicks = 30;
-
-  constructor(props){
-    super(props);
-    this.handleInputChange = this.handleInputChange.bind(this)
-  }
-
-  handleInputChange(event){
-    this.props.onChange(event);
-  }
-
-  render(){
-    const pickNumList = [...Array(DraftPickSelector.numPicks).keys()].map(
-      value => <option key={(value+1).toString()} value={value+1}>{value+1}</option>);
-    return(
-      <label>
-        Select Pick Number:
-        <select name="pick" value={this.props.pick} onChange={this.handleInputChange}>
-          <option key="-1" value="" onChange={this.handleInputChange}>&nbsp;</option>
-          {pickNumList}
-        </select>
-      </label>
-    );
-  }
-}
-
-class DraftStatsSelector extends Component{
-  constructor(props){
-    super(props);
-    this.handleInputChange = this.handleInputChange.bind(this);
-  }
-  handleInputChange(event){
-    this.props.onChange(event);
-  }
-  render(){
-    return(
-      <label>
-        Show Draft Pick Stats?:
-        <select name="getStats" value={this.props.getStats} onChange={this.handleInputChange}>
-          <option key="0" value="false">No</option>
-          <option key="1" value="true">Yes</option>
-        </select>
-      </label>
-    );
-  }
-}
-
 class DraftForm extends Component{
   constructor(props){
     super(props);
