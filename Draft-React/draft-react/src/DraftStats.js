@@ -119,9 +119,7 @@ class DraftStats extends Component{
 	constructor(props){
 		super(props);
 		this.state = {
-			stats: this.props.stats,
-			showStats: false,
-			statsHeaders: Object.keys(this.props.stats.players[1].stats)
+			showStats: false
 		}
 		this.handleRowClick = this.handleRowClick.bind(this);
 	}
@@ -130,17 +128,19 @@ class DraftStats extends Component{
 		this.setState({showStats: true, pick: pick});
 	}
 	render(){
-		console.log('stats render');
+		const statsHeaders = Object.keys(this.props.stats.players[1].stats);
 		return(
 			<div>
 				<div>
 					<br/><br/>
-					<div><strong>Draft Year</strong>: {this.state.stats.year}</div>
+					<div><strong>Draft Year</strong>: {this.props.stats.year}</div>
 					<br/>
 				</div>
 				<div id="draft-list-container">
-					<DraftList stats={this.state.stats.order} onClick={this.handleRowClick}/>
-					{this.state.showStats ? <StatsDisplay headers={this.state.statsHeaders} stats={this.state.stats} pick={this.state.pick}/> : <div/>}
+					<DraftList stats={this.props.stats.order} onClick={this.handleRowClick}/>
+					{this.state.showStats ? 
+						<StatsDisplay headers={statsHeaders} stats={this.props.stats} pick={this.state.pick}/> : 
+						<div/>}
 				</div>
 			</div>
 		);

@@ -34,7 +34,6 @@ class NBApi extends Component{
     fetch(apiEndpoint)
     .then(handleErrors)
     .then(data => {
-      console.log('here');
       data['year'] = state.year;
       data['pick'] = state.pick;
       this.setState({draftStats: data, showStats: true});
@@ -44,7 +43,6 @@ class NBApi extends Component{
     });
   }
   render(){
-    console.log('render');
     return(
       <div>
         <DraftForm handleFormSubmit={this.handleFormSubmit}/>
