@@ -27,9 +27,13 @@
   to { transform: rotate(360deg); }
 }
 
+#root{
+  padding: 25px;
+}
+
 #draft-list-container{
   width: 100%;
-  /*display: flex;*/
+  white-space: nowrap;
 }
 
 .draft-container{
@@ -39,7 +43,7 @@
 
 #draft-board-container{
   width: 55%;
-  float: left;
+  display: inline-block;
   overflow-y: scroll;
 }
 
@@ -49,12 +53,13 @@
 
 #draft-stats-container{
   width: 40%;
-  float: right;
+  margin-left: 50px;
+  display: inline-block;
   align-items: center;
 }
 
 #draft-stats{
-  width: 100%;
+  width: 90%;
 }
 
 .stats-table{

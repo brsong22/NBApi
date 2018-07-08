@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
 
 class StatsTableHeaders extends Component{
 	render(){
@@ -137,11 +138,18 @@ class DraftStats extends Component{
 		this.handleRowClick = this.handleRowClick.bind(this);
 	}
 
+	playerInfo = this.props.stats.players;
+
 	handleRowClick(event, pick){
 		this.setState({pick: pick});
 	}
 	render(){
 		const statsHeaders = Object.keys(this.props.stats.players[1].stats);
+		const playerName = this.props.stats.players[this.state.pick].player;
+		const playerStats = this.props.stats.players[this.state.pick].stats;
+		const teamAbbr = this.props.stats.order[this.state.pick].abbr;
+		const teamStats = this.props.stats.teams[teamAbbr].totals;
+		const barData = Object.keys(playerStats).map(stat => { return {stat, [playerName]: parseFloat(playerStats[stat]), [teamAbbr]: parseFloat(teamStats[stat])}});
 		return(
 			<div>
 				<div>
@@ -152,6 +160,17 @@ class DraftStats extends Component{
 				<div id="draft-list-container">
 					<DraftList stats={this.props.stats.order} onClick={this.handleRowClick} pick={this.state.pick}/>
 					<StatsDisplay headers={statsHeaders} stats={this.props.stats} pick={this.state.pick}/>
+				</div>
+				<div>
+					<BarChart width={900} height={500} data={barData} margin={{top: 5, right: 30, left: 20, bottom: 5}}>
+						<CartesianGrid strokeDasharray="5 5" />
+						<XAxis type="category" dataKey="stat"/>
+						<YAxis type="number" />
+						<Tooltip />
+						<legend />
+						<Bar dataKey={playerName} fill="#8884d8" barSize={20} isAnimationActive={true}/>
+						<Bar dataKey={teamAbbr} fill="#82ca9d" barSize={20} />
+					</BarChart>
 				</div>
 			</div>
 		);
