@@ -132,14 +132,13 @@ class DraftStats extends Component{
 	constructor(props){
 		super(props);
 		this.state = {
-			showStats: false,
-			pick: 1
+			pick: this.props.pick
 		}
 		this.handleRowClick = this.handleRowClick.bind(this);
 	}
 
 	handleRowClick(event, pick){
-		this.setState({showStats: true, pick: pick});
+		this.setState({pick: pick});
 	}
 	render(){
 		const statsHeaders = Object.keys(this.props.stats.players[1].stats);
