@@ -14,8 +14,8 @@ class DraftYearSelector extends Component{
 
   render(){
     const draftYears = [...Array(5).keys()].map(
-      value => <option key={(value+1).toString()} value={DraftYearSelector.currentYear}>
-        {DraftYearSelector.currentYear}
+      value => <option key={(value+1).toString()} value={DraftYearSelector.currentYear - value}>
+        {DraftYearSelector.currentYear - value}
       </option>);
     return(
       <label>
