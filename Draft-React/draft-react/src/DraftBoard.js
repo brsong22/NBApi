@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StatsTableHeaders } from './DraftStats';
+import { StatsTableHeaders, HandleErrors } from './DraftStats';
 
 class PickListDisplay extends Component{
 	constructor(props){
@@ -47,30 +47,57 @@ class PlayerDisplay extends Component{
 }
 
 class DraftBoard extends Component{
+	static headers = ["Pick", "Team", "Player"];
 	constructor(props){
 		super(props);
 		this.state = {
-			pick: 1,
-			showStats: false,
-			stats: {}
+			data: {},
+			stats: {},
+			pickList: []
 		}
 		this.handleRowClick = this.handleRowClick.bind(this);
+	}
+	componentDidMount(){
+		const draftBoardURL = 'http://localhost:5000/nba/draft/api/drafts/' + this.props.year;
+		this.getDraftBoard(draftBoardURL);
+	}
+	componentDidUpdate(prevProps){
+		if(this.props.year !== prevProps.year){
+			const draftBoardURL = 'http://localhost:5000/nba/draft/api/drafts/' + this.props.year;
+			this.getDraftBoard(draftBoardURL);
+		}
+		else if(this.props.selectedRow !== prevProps.selectedRow){
+			this.setPickList(this.state.data);
+		}
+	}
+	getDraftBoard(endpoint){
+		fetch(endpoint)
+		.then(HandleErrors)
+		.then(data => {
+		  this.setState({data: data});
+		  this.setPickList(data);
+		})
+		.catch(error => {
+		  this.setState({error: true});
+		});
+	}
+	setPickList(data){
+		const pickList = Object.keys(data).map(pick => 
+			<PickListDisplay key={pick} pick={pick} abbr={data[pick].abbr} 
+			team={data[pick].team} player={data[pick].player} 
+			onClick={this.handleRowClick} className={this.props.selectedRow.toString() === pick ? 'selected-row' : ''}/>);
+		this.setState({pickList: pickList});
 	}
 	handleRowClick(event, pick){
 		this.props.onClick(event, pick);
 	}
 	render(){
-		const stats = this.props.draftBoard;
-		const headers = ["Pick", "Team", "Player"];
-		const pickList = Object.keys(stats).map((pick) => 
-			<PickListDisplay key={pick} pick={pick} abbr={stats[pick].abbr} team={stats[pick].team} player={stats[pick].player} 
-				onClick={this.handleRowClick} className={this.props.selectedRow.toString() === pick ? 'selected-row' : ''}/>);
 		return(
 			<div className="draft-container" id="draft-board-container">
 				<table className="stats-table" id="draft-board">
 					<tbody>
-						<StatsTableHeaders headers={headers}/>
-						{pickList}
+						<StatsTableHeaders headers={DraftBoard.headers}/>
+						{this.state.pickList}
 					</tbody>
 				</table>
 			</div>

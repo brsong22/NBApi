@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 class DraftYearSelector extends Component{
-  static currentYear = new Date().getFullYear();
+  static currentYear = 2017;
 
   constructor(props){
     super(props);

@@ -23,71 +23,56 @@ class StatsRow extends Component{
 		return(
 			<tr>
 				<td>{this.props.stat}</td>
-				<td>{this.props.teamRanks[this.props.stat]}</td>
-				<td>{this.props.teamTotals[this.props.stat]}</td>
-				<td>{this.props.playerStats[this.props.stat]}</td>
+				<td>{this.props.teamRanks}</td>
+				<td>{this.props.teamTotals}</td>
+				<td>{this.props.playerStats}</td>
 			</tr>
 		);
 	}
 }
 
-class StatsTable extends Component{
-	render(){
-		const statCats = Object.keys(this.props.stats.player.stats);
-		const player = this.props.stats.player.stats;
-		const teamTotals = this.props.stats.team.totals;
-		const teamRanks = this.props.stats.team.ranks;
-		const statRows = statCats.map(stat => <StatsRow key={stat} stat={stat} playerStats={player} teamTotals={teamTotals} teamRanks={teamRanks}/>);
-		return( 
-			statRows
-		);
+class DraftStats extends Component{
+	static statCats= ["2pa","2pp","3pa","3pp","fta","ftp","drb","orb","ast","blk","stl","pts"];
+	constructor(props){
+		super(props);
+		this.state = {
+			headers: [],
+			statRows: []
+		}
 	}
-}
-
-class StatsDisplay extends Component{
+	componentDidMount(){
+		const draftPickStats = 'http://localhost:5000/nba/draft/api/drafts/' + this.props.year + '/' + this.props.pick + '/stats';
+		this.getPickStats(draftPickStats);
+	}
+	componentDidUpdate(prevProps){
+		if(this.props.pick !== prevProps.pick || this.props.year !== prevProps.year){
+			const draftPickStats = 'http://localhost:5000/nba/draft/api/drafts/' + this.props.year + '/' + this.props.pick + '/stats';
+			this.getPickStats(draftPickStats);
+		}
+	}
+	getPickStats(endpoint){
+	  fetch(endpoint)
+	  .then(HandleErrors)
+	  .then(data => {
+	    const statRows = DraftStats.statCats.map(stat => <StatsRow key={stat} stat={stat} 
+	    	playerStats={data.player.stats[stat]} teamTotals={data.team.totals[stat]} teamRanks={data.team.ranks[stat]}/>);
+	    const headers = ["Stats", "(" + data.team.abbr + ") Ranks", "(" + data.team.abbr + ") Totals", data.player.player];
+	    this.setState({statRows: statRows, headers: headers});
+	  })
+	  .catch(error => {
+	    this.setState({error: true});
+	  });
+	}
 	render(){
 		return(
 			<div className="draft-container" id="draft-stats-container">
 				<table className="stats-table" id="draft-stats">
 					<tbody>
-						<StatsTableHeaders headers={["Stats", this.props.stats.team.abbr + " Rank", this.props.stats.team.abbr + " Total", this.props.stats.player.player]}/>
-						<StatsTable stats={this.props.stats}/>
+						<StatsTableHeaders headers={this.state.headers}/>
+						{this.state.statRows}
 					</tbody>
 				</table>
-				<br/>
 			</div>
-		);
-	}
-}
-
-class DraftStats extends Component{
-	constructor(props){
-		super(props);
-		this.state = {
-			pick: 1,
-			showStats: false
-		}
-		this.handleRowClick = this.handleRowClick.bind(this);
-	}
-	callAPI(endpoint){
-		fetch(endpoint)
-		.then(HandleErrors)
-		.then(data => {
-			const stats = {player: data.player, team: data.team}
-			this.setState({stats: stats, showStats: true});
-		})
-		.catch(error => {
-		  this.setState({error: true});
-		});
-	}
-	handleRowClick(event, pick){
-		this.setState({pick: pick});
-		const endpoint = 'http://localhost:5000/nba/draft/api/drafts/' + this.props.year + '/' + pick + '/stats';
-		this.callAPI(endpoint);
-	}
-	render(){
-		return(
-			<StatsDisplay stats={this.props.stats} pick={this.state.pick}/>
 		);
 	}
 }

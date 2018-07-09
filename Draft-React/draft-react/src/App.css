@@ -82,3 +82,9 @@
 .selected-row{
   background-color: #dadada;
 }
+
+.custom-tooltip{
+  background-color: #ffffff;
+  padding: 0px 10px 0px 10px;
+  border: 1px solid #000000;
+}
