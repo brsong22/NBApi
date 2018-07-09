@@ -1,4 +1,5 @@
 import nba_draft_data as draft
+import numpy as np
 from flask import Flask, jsonify
 from flask import abort
 from flask import make_response
@@ -37,7 +38,6 @@ def get_draft_pick(year, pick):
 	return jsonify(pick_stats)
 
 @app.route('/nba/draft/api/drafts/<int:year>/<int:pick>/stats', methods=['GET'])
-#"display-2" data DEPRECATE
 def get_draft_pick_stats(year, pick):
 	draft = get_draft_stats(year).get_json()
 	player_stats = draft['players'].get(str(pick))
@@ -49,14 +49,12 @@ def get_draft_pick_stats(year, pick):
 	return jsonify(draft_player_team_stats)
 
 @app.route('/nba/draft/api/drafts/<int:year>', methods=['GET'])
-#"display-3" data DEPRECATE
 def get_draft(year):
 	draft = get_draft_stats(year).get_json()
 	# print(draft.get('order'))
 	return jsonify(draft.get('order'))
 
 @app.route('/nba/draft/api/drafts/<int:year>/stats', methods=['GET'])
-#"display-4" data
 def get_draft_stats(year):
 	draft = [draft for draft in drafts if draft['year'] == year]
 	if len(draft) == 0:
@@ -64,7 +62,34 @@ def get_draft_stats(year):
 	# print(draft[0])
 	return jsonify(draft[0])
 
-
+@app.route('/nba/draft/api/drafts/<int:year>/avgs', methods=['GET'])
+def get_draft_avgs(year):
+	draft = get_draft_stats(year).get_json()
+	team_avg = {}
+	team_count = 0.0
+	for team in draft.get('teams'):
+		team_count += 1
+		for stat in draft['teams'][team].get('totals'):
+			if stat in team_avg:
+				team_avg[stat] += float(draft['teams'][team]['totals'].get(stat))
+			else:
+				team_avg[stat] = float(draft['teams'][team]['totals'].get(stat))
+	for stat in team_avg:
+		team_avg[stat] = float("{0:.2f}".format(team_avg[stat]/team_count))
+	player_avg = {}
+	player_count = 0
+	for i in draft.get('players'):
+		player_count += 1
+		for stat in draft['players'][i].get('stats'):
+			if not np.isnan(float(draft['players'][i]['stats'].get(stat))):
+				if stat in player_avg:
+					player_avg[stat] += float(draft['players'][i]['stats'].get(stat))
+				else:
+					player_avg[stat] = float(draft['players'][i]['stats'].get(stat))
+	for stat in player_avg:
+		player_avg[stat] = float("{0:.2f}".format(player_avg[stat]/player_count))
+	avgs = {'players': player_avg, 'teams': team_avg}
+	return jsonify(avgs)
 
 
 
