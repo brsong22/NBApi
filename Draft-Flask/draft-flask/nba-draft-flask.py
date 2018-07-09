@@ -75,7 +75,7 @@ def get_draft_avgs(year):
 			else:
 				team_avg[stat] = float(draft['teams'][team]['totals'].get(stat))
 	for stat in team_avg:
-		team_avg[stat] = float("{0:.2f}".format(team_avg[stat]/team_count))
+		team_avg[stat] = float("{0:.3f}".format(team_avg[stat]/team_count))
 	player_avg = {}
 	player_count = 0
 	for i in draft.get('players'):
@@ -87,7 +87,7 @@ def get_draft_avgs(year):
 				else:
 					player_avg[stat] = float(draft['players'][i]['stats'].get(stat))
 	for stat in player_avg:
-		player_avg[stat] = float("{0:.2f}".format(player_avg[stat]/player_count))
+		player_avg[stat] = float("{0:.3f}".format(player_avg[stat]/player_count))
 	avgs = {'players': player_avg, 'teams': team_avg}
 	return jsonify(avgs)
 
