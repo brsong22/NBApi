@@ -1,12 +1,6 @@
 import urllib.request
 from datetime import datetime
-import configparser
 import csv
-
-cfg = configparser.ConfigParser()
-cfg.read("draft_flask_cfg.ini")
-nba_url = cfg.get("Base", "Url")
-cbb_url = cfg.get("Base", "CbbUrl")
 
 prev_year = datetime.today().year-1
 
