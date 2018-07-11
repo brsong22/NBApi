@@ -1,4 +1,5 @@
 *.csv
+!Draft-Flask/draft-flask/*.csv
 *.txt
 *.ini
 *.json
