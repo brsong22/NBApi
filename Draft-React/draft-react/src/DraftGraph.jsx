@@ -12,36 +12,36 @@ import CustomTooltip from './CustomTooltip';
 import { HandleErrors } from './DraftStats/DraftStats';
 
 const teamColorCodes = {
-  ATL: '#e03a3e',
-  BKN: '#000000',
-  BOS: '#007a33',
-  CHA: '#1d1160',
-  CHI: '#ce1141',
-  CLE: '#6f263d',
-  DAL: '#00538c',
-  DEN: '#00285e',
-  DET: '#ed174c',
-  GSW: '#006bb6',
-  HOU: '#ce1141',
-  IND: '#002d62',
-  LAC: '#ed174c',
-  LAL: '#552583',
-  MEM: '#6189b9',
-  MIA: '#98002e',
-  MIL: '#00471b',
-  MIN: '#0c2340',
-  NOP: '#002b5c',
-  NYK: '#006bb6',
-  OKC: '#007ac1',
-  ORL: '#0057b8',
-  PHI: '#006bb6',
-  PHX: '#1d1160',
-  POR: '#e03a3e',
-  SAC: '#5a2d81',
-  SAS: '#000000',
-  TOR: '#ce1141',
-  UTA: '#002b5c',
-  WAS: '#002b5c',
+  ATL: { primary: '#e03a3e', secondary: '#26282a' },
+  BKN: { primary: '#000000', secondary: '#000000' },
+  BOS: { primary: '#007a33', secondary: '#ba9653' },
+  CHA: { primary: '#1d1160', secondary: '#00788c' },
+  CHI: { primary: '#ce1141', secondary: '#000000' },
+  CLE: { primary: '#6f263d', secondary: '#ffb81c' },
+  DAL: { primary: '#00538c', secondary: '#002b5e' },
+  DEN: { primary: '#00285e', secondary: '#fec524' },
+  DET: { primary: '#ed174c', secondary: '#006bb6' },
+  GSW: { primary: '#006bb6', secondary: '#fdb927' },
+  HOU: { primary: '#ce1141', secondary: '#000000' },
+  IND: { primary: '#002d62', secondary: '#fdbb30' },
+  LAC: { primary: '#ed174c', secondary: '#006bb6' },
+  LAL: { primary: '#552583', secondary: '#fdb927' },
+  MEM: { primary: '#6189b9', secondary: '#00285e' },
+  MIA: { primary: '#98002e', secondary: '#f9a01b' },
+  MIL: { primary: '#00471b', secondary: '#eee1c6' },
+  MIN: { primary: '#236192', secondary: '#78BE20' },
+  NOP: { primary: '#002b5c', secondary: '#85714d' },
+  NYK: { primary: '#006bb6', secondary: '#f58426' },
+  OKC: { primary: '#007ac1', secondary: '#ef3b24' },
+  ORL: { primary: '#0057b8', secondary: '#000000' },
+  PHI: { primary: '#006bb6', secondary: '#ed174c' },
+  PHX: { primary: '#1d1160', secondary: '#e56020' },
+  POR: { primary: '#e03a3e', secondary: '#000000' },
+  SAC: { primary: '#5a2d81', secondary: '#000000' },
+  SAS: { primary: '#000000', secondary: '#000000' },
+  TOR: { primary: '#ce1141', secondary: '#000000' },
+  UTA: { primary: '#002b5c', secondary: '#00471b' },
+  WAS: { primary: '#002b5c', secondary: '#e31837' },
 };
 
 class DraftGraph extends Component {
@@ -186,6 +186,9 @@ class DraftGraph extends Component {
       teamBar,
       teamAbbr,
     } = this.state;
+    const playerFill = teamAbbr === '' ? '#000000' : teamColorCodes[teamAbbr].secondary;
+    const teamFill = teamAbbr === '' ? '#000000' : teamColorCodes[teamAbbr].primary;
+
     return (
       <div>
         <p>
@@ -209,8 +212,8 @@ class DraftGraph extends Component {
           <YAxis type="number" />
           <Tooltip content={<CustomTooltip />} />
           <legend />
-          <Bar dataKey={playerName} fill="#d13030" barSize={20} />
-          <Bar dataKey="Draft Prospect Avgs" fill="#fa9693" barSize={20} />
+          <Bar dataKey={playerName} fill={playerFill} barSize={20} />
+          <Bar dataKey="Draft Prospect Avgs" fill="#9e9c9b" barSize={20} />
         </BarChart>
         <br />
         <p>
@@ -234,7 +237,7 @@ class DraftGraph extends Component {
           <YAxis type="number" />
           <Tooltip content={<CustomTooltip />} />
           <legend />
-          <Bar dataKey={teamAbbr} fill={teamColorCodes[teamAbbr]} barSize={20} />
+          <Bar dataKey={teamAbbr} fill={teamFill} barSize={20} />
           <Bar dataKey="League Team Avgs" fill="#9e9c9b" barSize={20} />
         </BarChart>
       </div>
