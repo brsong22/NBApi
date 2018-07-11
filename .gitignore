@@ -2,6 +2,7 @@
 *.txt
 *.ini
 *.json
+!package.json
 
 # Windows thumbnail cache files
 Thumbs.db
