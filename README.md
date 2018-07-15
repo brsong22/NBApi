@@ -1,5 +1,6 @@
 # NBApi
 nba draft api
+blog (in progress): [NBApi: Noob's Basketball API/Analysis](https://medium.com/@brsong22/nbapi-noobs-basketball-api-analysis-9a7a01a03a95)
 
 # Objective:
 Using NBA draft data obtained from [nba-draft-predictor](https://github.com/brsong/nba-draft-predictor) set up an API
