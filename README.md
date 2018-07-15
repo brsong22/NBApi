@@ -3,6 +3,30 @@ nba draft api
 
 blog (in progress): [NBApi: Noob's Basketball API/Analysis](https://medium.com/@brsong22/nbapi-noobs-basketball-api-analysis-9a7a01a03a95)
 
+#### Setting up on local:
+
+###### Installation
+Create a git repo with ```git init``` in the directory you wish to clone NBApi to.
+
+Clone NBApi with ```git clone https://github.com/brsong22/NBApi.git``` this will create directory NBApi in your current directory.
+
+Next you need to install the Python dependencies and the React dependencies:
+
+To install the Python dependencies ```cd``` down into the ```draft-flask``` directory. You should see a ```requirements.txt``` file. Install the requirements listed using ```pip install -r requirements.txt```
+
+Navigate to the ```draft-react``` directory. You should see a ```package.json``` file. Run ```npm install``` to install the React dependencies for the project.
+
+###### Running NBApi:
+To run NBApi, go into the ```draft-flask``` directory. Run ```python nba-draft-flask.py``` this will start our Flask server and allow us to communicate with our API.
+
+Next, go into the ```draft-react``` directory and run ```npm start```
+
+You should automatically be directed to your browser and a tab to ```localhost:3000``` should open.
+
+NBApi should now be running!
+
+---
+
 # Objective:
 Using NBA draft data obtained from [nba-draft-predictor](https://github.com/brsong/nba-draft-predictor) set up an API
 using Python Flask and display the data using React.js.
@@ -21,9 +45,20 @@ The API is set up using the [Flask](http://flask.pocoo.org/) microframework.
 
 In order to use data obtained from the basketball stats reference site, I first read in the data saved to .csv files to create dictionary objects to act as a pseudo database.
 
-I then set up an app route as an API endpoint in the Flask server. Due to the simplicity of the data gathered and the behavior of the app's frontend, I only set up a single endpoint which returns the data in its entirety.
+I then set up an app route as an API endpoint in the Flask server.
 
-The complexity could increase with a wider extent of types of data gathered.
+App Endpoints:
+- /nba/draft/api/drafts/{year}/{pick}/stats
+
+   returns the stats of player and team given the draft year and pick number
+
+- /nba/draft/api/drafts/{year}/avgs
+
+   returns the stat averages of all players and the stat averages of teams with first round picks
+
+- /nba/draft/api/drafts/{year}
+
+   returns the player names and team names in pick order (a.k.a. 'draft board')
 
 ## UI
 
