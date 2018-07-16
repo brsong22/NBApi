@@ -160,13 +160,6 @@ class DraftGraph extends Component {
       teamAbbr,
       teamsAvg,
     } = this.state;
-    const percentStats = ['2pp', '3pp', 'ftp'];
-    for (let i = 0; i < percentStats.length; i += 1) {
-      playerData[percentStats[i]] = parseFloat(playerData[percentStats[i]]).toFixed(3) * 100;
-      playersAvg[percentStats[i]] = parseFloat(playersAvg[percentStats[i]]).toFixed(3) * 100;
-      teamData[percentStats[i]] = parseFloat(teamData[percentStats[i]]).toFixed(3) * 100;
-      teamsAvg[percentStats[i]] = parseFloat(teamsAvg[percentStats[i]]).toFixed(3) * 100;
-    }
     const playerBar = Object.keys(playerData).map(stat => (
       {
         stat,
