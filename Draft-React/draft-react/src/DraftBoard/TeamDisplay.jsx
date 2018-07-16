@@ -6,7 +6,7 @@ const TeamDisplay = ({ abbr, team }) => (
     <strong>
       (
       {abbr}
-      )
+      )&nbsp;
     </strong>
     {team}
   </td>

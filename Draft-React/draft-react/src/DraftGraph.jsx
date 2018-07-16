@@ -83,9 +83,8 @@ class DraftGraph extends Component {
       });
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     const { year, pick } = this.props;
-    const { playerName } = this.state;
     const endpoint = 'http://localhost:5000/nba/draft/api/drafts/';
     const statsSuffix = '/stats';
     const avgsSuffix = '/avgs';
@@ -117,8 +116,6 @@ class DraftGraph extends Component {
           });
           this.createBarData();
         });
-    } else if (playerName !== prevState.playerName) {
-      this.createBarData();
     }
   }
 
@@ -163,19 +160,26 @@ class DraftGraph extends Component {
       teamAbbr,
       teamsAvg,
     } = this.state;
+    const percentStats = ['2pp', '3pp', 'ftp'];
+    for (let i = 0; i < percentStats.length; i += 1) {
+      playerData[percentStats[i]] = parseFloat(playerData[percentStats[i]]).toFixed(3) * 100;
+      playersAvg[percentStats[i]] = parseFloat(playersAvg[percentStats[i]]).toFixed(3) * 100;
+      teamData[percentStats[i]] = parseFloat(teamData[percentStats[i]]).toFixed(3) * 100;
+      teamsAvg[percentStats[i]] = parseFloat(teamsAvg[percentStats[i]]).toFixed(3) * 100;
+    }
     const playerBar = Object.keys(playerData).map(stat => (
       {
         stat,
-        [playerName]: parseFloat(playerData[stat]),
-        'Draft Prospect Avgs': parseFloat(playersAvg[stat]),
+        [playerName]: playerData[stat],
+        'Draft Prospect Avgs': playersAvg[stat],
       }
     ));
 
     const teamBar = Object.keys(teamData).map(stat => (
       {
         stat,
-        [teamAbbr]: parseFloat(teamData[stat]),
-        'League Team Avgs': parseFloat(teamsAvg[stat]),
+        [teamAbbr]: teamData[stat],
+        'League Team Avgs': teamsAvg[stat],
       }
     ));
     this.setState({ playerBar, teamBar, showGraph: true });
