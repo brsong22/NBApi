@@ -7,10 +7,11 @@ import {
   YAxis,
   Tooltip,
   Legend,
+  ResponsiveContainer,
 } from 'recharts';
 import PropTypes from 'prop-types';
 import CustomTooltip from './CustomTooltip';
-import { HandleErrors } from './DraftStats/DraftStats';
+import { HandleErrors } from '../DraftStats/DraftStats';
 
 const teamColorCodes = {
   ATL: { primary: '#e03a3e', secondary: '#26282a' },
@@ -163,16 +164,16 @@ class DraftGraph extends Component {
     const playerBar = Object.keys(playerData).map(stat => (
       {
         stat,
-        [playerName]: playerData[stat],
-        'Draft Prospect Avgs': playersAvg[stat],
+        [playerName]: parseFloat(playerData[stat]),
+        'Draft Prospect Avgs': parseFloat(playersAvg[stat]),
       }
     ));
 
     const teamBar = Object.keys(teamData).map(stat => (
       {
         stat,
-        [teamAbbr]: teamData[stat],
-        'League Team Avgs': teamsAvg[stat],
+        [teamAbbr]: parseFloat(teamData[stat]),
+        'League Team Avgs': parseFloat(teamsAvg[stat]),
       }
     ));
     this.setState({ playerBar, teamBar, showGraph: true });
@@ -193,56 +194,49 @@ class DraftGraph extends Component {
       <div>
         {showGraph
           && (
-          <div>
-            <p>
-              <strong>
-                Prospect vs. All Prospects Per Game Averages
-              </strong>
-            </p>
-            <BarChart
-              width={900}
-              height={500}
-              data={playerBar}
-              margin={
-                {
-                  top: 5, right: 30, left: 20, bottom: 5,
+          <div className="draft-container">
+            <ResponsiveContainer width="50%" height={400}>
+              <BarChart
+                width={550}
+                height={400}
+                data={playerBar}
+                margin={
+                  {
+                    top: 5, right: 30, left: 20, bottom: 5,
+                  }
                 }
-              }
-            >
-              <CartesianGrid strokeDasharray="5 5" />
-              <CartesianGrid strokeDasharray="5 5" />
-              <XAxis type="category" dataKey="stat" />
-              <YAxis type="number" />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend />
-              <Bar dataKey={playerName} fill={playerFill} barSize={20} />
-              <Bar dataKey="Draft Prospect Avgs" fill="#9e9c9b" barSize={20} />
-            </BarChart>
-            <br />
-            <p>
-              <strong>
-                Team vs. All Teams (in draft) Per Game Averages
-              </strong>
-            </p>
-            <BarChart
-              width={900}
-              height={500}
-              data={teamBar}
-              margin={
-                {
-                  top: 5, right: 30, left: 20, bottom: 5,
+              >
+                <CartesianGrid strokeDasharray="5 5" />
+                <CartesianGrid strokeDasharray="5 5" />
+                <XAxis type="category" dataKey="stat" />
+                <YAxis type="number" />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend />
+                <Bar dataKey={playerName} fill={playerFill} barSize={20} />
+                <Bar dataKey="Draft Prospect Avgs" fill="#9e9c9b" barSize={20} />
+              </BarChart>
+            </ResponsiveContainer>
+            <ResponsiveContainer width="50%" height={400}>
+              <BarChart
+                width={550}
+                height={400}
+                data={teamBar}
+                margin={
+                  {
+                    top: 5, right: 30, left: 20, bottom: 5,
+                  }
                 }
-              }
-            >
-              <CartesianGrid strokeDasharray="5 5" />
-              <CartesianGrid strokeDasharray="5 5" />
-              <XAxis type="category" dataKey="stat" />
-              <YAxis type="number" />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend />
-              <Bar dataKey={teamAbbr} fill={teamFill} barSize={20} />
-              <Bar dataKey="League Team Avgs" fill="#9e9c9b" barSize={20} />
-            </BarChart>
+              >
+                <CartesianGrid strokeDasharray="5 5" />
+                <CartesianGrid strokeDasharray="5 5" />
+                <XAxis type="category" dataKey="stat" />
+                <YAxis type="number" />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend />
+                <Bar dataKey={teamAbbr} fill={teamFill} barSize={20} />
+                <Bar dataKey="League Team Avgs" fill="#9e9c9b" barSize={20} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
           )
         }

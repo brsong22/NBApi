@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import DraftForm from './DraftForm/DraftForm';
 import DraftBoard from './DraftBoard/DraftBoard';
 import { DraftStats } from './DraftStats/DraftStats';
-import DraftGraph from './DraftGraph';
+import DraftGraph from './DraftGraph/DraftGraph';
 import './App.css';
 
 class NBApi extends Component {
@@ -47,6 +47,7 @@ class NBApi extends Component {
           <DraftStats year={year} pick={pick} />
         </div>
         <div>
+          <br />
           <DraftGraph year={year} pick={pick} />
         </div>
       </div>

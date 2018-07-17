@@ -41,6 +41,9 @@
   display: flex;
 }
 
+div.draft-container > div{
+  display: inline-block;
+}
 #draft-board-container{
   width: 55%;
   display: inline-block;
