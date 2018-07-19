@@ -1,6 +1,8 @@
 # NBApi
 nba draft api
 
+live heroku app: [https://nbapi-draft.herokuapp.com/](https://nbapi-draft.herokuapp.com/)
+
 blog (in progress): [NBApi: Noob's Basketball API/Analysis](https://medium.com/@brsong22/nbapi-noobs-basketball-api-analysis-9a7a01a03a95)
 
 #### Setting up on local:
