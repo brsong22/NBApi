@@ -6,7 +6,7 @@ from flask import make_response
 from flask_cors import CORS
 
 app = Flask(__name__)
-cors = CORS(app, resources={r"/nba/draft/api/drafts/*": {"origins": "http://localhost:3000"}})
+cors = CORS(app, resources={r"/nba/draft/api/drafts/*": {"origins": ["http://localhost:3000", "https://nbapi-draft.herokuapp.com"]}})
 
 draft_years = [
 	{
@@ -93,5 +93,5 @@ def get_draft_avgs(year):
 
 
 
-if __name__ == '__main__':
-	app.run(debug=True)
+# if __name__ == '__main__':
+# 	app.run(debug=True)

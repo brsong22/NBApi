@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import StatsTableHeaders from './StatsTableHeaders';
 import StatsRow from './StatsRow';
 
+const nbapiEndpoint = process.env.REACT_APP_NBAPI_KEY;
+
 function HandleErrors(response) {
   if (!response.ok) {
     throw Error(response.statusText);
@@ -22,21 +24,19 @@ class DraftStats extends Component {
   }
 
   componentDidMount() {
-    const endpoint = 'http://localhost:5000/nba/draft/api/drafts/';
     const suffix = '/stats';
     const delim = '/';
     const { year, pick } = this.props;
-    const draftPickStats = endpoint + year + delim + pick + suffix;
+    const draftPickStats = nbapiEndpoint + year + delim + pick + suffix;
     this.getPickStats(draftPickStats);
   }
 
   componentDidUpdate(prevProps) {
     const { year, pick } = this.props;
-    const endpoint = 'http://localhost:5000/nba/draft/api/drafts/';
     const suffix = '/stats';
     const delim = '/';
     if (year !== prevProps.year || pick !== prevProps.pick) {
-      const draftPickStats = endpoint + year + delim + pick + suffix;
+      const draftPickStats = nbapiEndpoint + year + delim + pick + suffix;
       this.getPickStats(draftPickStats);
     }
   }

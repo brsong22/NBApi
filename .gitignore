@@ -1,3 +1,9 @@
+Draft-Flask/*.git
+Draft-Flask/*.gitignore
+Draft-React/*.git
+Draft-React/*.gitignore
+Procfile
+*.env
 *.csv
 !Draft-Flask/draft-flask/*.csv
 *.txt
@@ -29,3 +35,4 @@ $RECYCLE.BIN/
 # =========================
 # Operating System Files
 # =========================
+.DS_Store

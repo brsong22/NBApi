@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import PickListDisplay from './PickListDisplay';
 import { StatsTableHeaders, HandleErrors } from '../DraftStats/DraftStats';
 
+const nbapiEndpoint = process.env.REACT_APP_NBAPI_KEY;
+
 class DraftBoard extends Component {
   static headers = ['Pick', 'Team', 'Player'];
 
@@ -17,17 +19,15 @@ class DraftBoard extends Component {
 
   componentDidMount() {
     const { year } = this.props;
-    const endpoint = 'http://localhost:5000/nba/draft/api/drafts/';
-    const draftBoardURL = endpoint + year;
+    const draftBoardURL = nbapiEndpoint + year;
     this.getDraftBoard(draftBoardURL);
   }
 
   componentDidUpdate(prevProps) {
     const { year, selectedRow } = this.props;
     const { data } = this.state;
-    const endpoint = 'http://localhost:5000/nba/draft/api/drafts/';
     if (year !== prevProps.year) {
-      const draftBoardURL = endpoint + year;
+      const draftBoardURL = nbapiEndpoint + year;
       this.getDraftBoard(draftBoardURL);
     } else if (selectedRow !== prevProps.selectedRow) {
       this.setPickList(data);
