@@ -27,7 +27,7 @@ class DraftForm extends Component {
     return (
       <div>
         <form onSubmit={this.handleFormSubmit}>
-          <DraftYearSelector year={year} onChange={this.handleInputChange} />
+          <DraftYearSelector year={parseInt(year, 10)} onChange={this.handleInputChange} />
           <br />
           <input type="submit" value="Get Draft Info" />
         </form>

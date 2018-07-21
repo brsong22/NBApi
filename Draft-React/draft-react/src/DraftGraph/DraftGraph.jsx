@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
 import CustomTooltip from './CustomTooltip';
 import { HandleErrors } from '../DraftStats/DraftStats';
 
-const nbapiEndpoint = process.env.REACT_APP_NBAPI_KEY;
+const nbapiEndpoint = process.env.REACT_APP_NBAPI_ENDPOINT;
 
 const teamColorCodes = {
   ATL: { primary: '#e03a3e', secondary: '#26282a' },

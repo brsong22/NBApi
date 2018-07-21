@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import PickListDisplay from './PickListDisplay';
 import { StatsTableHeaders, HandleErrors } from '../DraftStats/DraftStats';
 
-const nbapiEndpoint = process.env.REACT_APP_NBAPI_KEY;
+const nbapiEndpoint = process.env.REACT_APP_NBAPI_ENDPOINT;
 
 class DraftBoard extends Component {
   static headers = ['Pick', 'Team', 'Player'];

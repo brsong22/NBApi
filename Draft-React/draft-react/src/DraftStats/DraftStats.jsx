@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import StatsTableHeaders from './StatsTableHeaders';
 import StatsRow from './StatsRow';
 
-const nbapiEndpoint = process.env.REACT_APP_NBAPI_KEY;
-
+const nbapiEndpoint = process.env.REACT_APP_NBAPI_ENDPOINT;
+console.log(nbapiEndpoint);
 function HandleErrors(response) {
   if (!response.ok) {
     throw Error(response.statusText);
