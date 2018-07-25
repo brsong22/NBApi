@@ -1,12 +1,15 @@
 import nba_draft_data as draft
+import flask_configs as cfg
 import numpy as np
+import certifi
 from flask import Flask, jsonify
 from flask import abort
 from flask import make_response
 from flask_cors import CORS
+from application_only_auth import Client
 
 app = Flask(__name__)
-cors = CORS(app, resources={r"/nba/draft/api/drafts/*": {"origins": ["http://localhost:3000", "https://nbapi-draft.herokuapp.com"]}})
+cors = CORS(app, resources={r"/nba/draft/api/*": {"origins": ["http://localhost:3000", "https://nbapi-draft.herokuapp.com"]}})
 
 draft_years = [
 	{
@@ -91,7 +94,10 @@ def get_draft_avgs(year):
 	avgs = {'players': player_avg, 'teams': team_avg}
 	return jsonify(avgs)
 
-
-
+@app.route('/nba/draft/api/tweets/<string:handle>', methods=['GET'])
+def get_team_tweets(handle):
+	twitter = Client(cfg.CONSUMER_KEY, cfg.CONSUMER_SECRET)
+	tweets = twitter.request('https://api.twitter.com/1.1/statuses/user_timeline.json?count=3&screen_name=' + handle)
+	return(jsonify(tweets))
 # if __name__ == '__main__':
 # 	app.run(debug=True)

@@ -65,12 +65,9 @@ class DraftGraph extends Component {
   }
 
   componentDidMount() {
-    const statsSuffix = '/stats';
-    const avgsSuffix = '/avgs';
-    const delim = '/';
     const { year, pick } = this.props;
-    const draftPickStats = nbapiEndpoint + year + delim + pick + statsSuffix;
-    const draftPickAvgs = nbapiEndpoint + year + avgsSuffix;
+    const draftPickStats = `${nbapiEndpoint}drafts/${year}/${pick}/stats`;
+    const draftPickAvgs = `${nbapiEndpoint}drafts/${year}/avgs`;
     Promise.all([DraftGraph.getPickStats(draftPickStats), DraftGraph.getPickAvgs(draftPickAvgs)])
       .then(([stats, avgs]) => {
         this.setState({
@@ -87,12 +84,9 @@ class DraftGraph extends Component {
 
   componentDidUpdate(prevProps) {
     const { year, pick } = this.props;
-    const statsSuffix = '/stats';
-    const avgsSuffix = '/avgs';
-    const delim = '/';
     if (year !== prevProps.year) {
-      const draftPickStats = nbapiEndpoint + year + delim + pick + statsSuffix;
-      const draftPickAvgs = nbapiEndpoint + year + avgsSuffix;
+      const draftPickStats = `${nbapiEndpoint}drafts/${year}/${pick}/stats`;
+      const draftPickAvgs = `${nbapiEndpoint}drafts/${year}/avgs`;
       Promise.all([DraftGraph.getPickStats(draftPickStats), DraftGraph.getPickAvgs(draftPickAvgs)])
         .then(([stats, avgs]) => {
           this.setState({
@@ -106,7 +100,7 @@ class DraftGraph extends Component {
           this.createBarData();
         });
     } else if (pick !== prevProps.pick) {
-      const draftPickStats = nbapiEndpoint + year + delim + pick + statsSuffix;
+      const draftPickStats = `${nbapiEndpoint}drafts/${year}/${pick}/stats`;
       Promise.all([DraftGraph.getPickStats(draftPickStats)])
         .then(([stats]) => {
           this.setState({

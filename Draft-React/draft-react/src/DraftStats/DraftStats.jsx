@@ -4,7 +4,7 @@ import StatsTableHeaders from './StatsTableHeaders';
 import StatsRow from './StatsRow';
 
 const nbapiEndpoint = process.env.REACT_APP_NBAPI_ENDPOINT;
-console.log(nbapiEndpoint);
+
 function HandleErrors(response) {
   if (!response.ok) {
     throw Error(response.statusText);
@@ -24,19 +24,15 @@ class DraftStats extends Component {
   }
 
   componentDidMount() {
-    const suffix = '/stats';
-    const delim = '/';
     const { year, pick } = this.props;
-    const draftPickStats = nbapiEndpoint + year + delim + pick + suffix;
+    const draftPickStats = `${nbapiEndpoint}drafts/${year}/${pick}/stats`;
     this.getPickStats(draftPickStats);
   }
 
   componentDidUpdate(prevProps) {
     const { year, pick } = this.props;
-    const suffix = '/stats';
-    const delim = '/';
     if (year !== prevProps.year || pick !== prevProps.pick) {
-      const draftPickStats = nbapiEndpoint + year + delim + pick + suffix;
+      const draftPickStats = `${nbapiEndpoint}drafts/${year}/${pick}/stats`;
       this.getPickStats(draftPickStats);
     }
   }
@@ -54,11 +50,8 @@ class DraftStats extends Component {
             teamRanks={data.team.ranks[stat]}
           />
         ));
-        const abbrPre = '(';
-        const teamRankSuff = ') Ranks';
-        const teamTotalSuff = ') Totals';
-        const rankHeader = abbrPre + data.team.abbr + teamRankSuff;
-        const totalHeader = abbrPre + data.team.abbr + teamTotalSuff;
+        const rankHeader = `(${data.team.abbr}) Ranks`;
+        const totalHeader = `(${data.team.abbr}) Totals`;
         const headers = ['Stats', rankHeader, totalHeader, data.player.player];
         this.setState({ statRows, headers });
       });

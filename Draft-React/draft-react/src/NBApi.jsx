@@ -34,15 +34,16 @@ class NBApi extends Component {
     return (
       <div>
         <DraftForm handleFormSubmit={this.handleFormSubmit} />
+        <br />
         <div>
           <TeamTweets pick={pick} year={year} />
+          <br />
           <div>
             <strong>
               Draft Year:&nbsp;
             </strong>
             {year}
           </div>
-          <br />
         </div>
         <div id="draft-list-container">
           <DraftBoard onClick={this.handleRowClick} year={year} selectedRow={selectedRow} />
