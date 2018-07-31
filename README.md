@@ -6,6 +6,7 @@ live heroku app: [https://nbapi-draft.herokuapp.com/](https://nbapi-draft.heroku
 blog (in progress): [NBApi: Noob's Basketball API/Analysis](https://medium.com/@brsong22/nbapi-noobs-basketball-api-analysis-9a7a01a03a95)
 
 #### Setting up on local:
+*(**Note**: these steps may no longer be sufficient to setup NBApi due to the use of dotenv to remove API keys and endpoints from the source files and move them into config files.)*
 
 ###### Installation
 Create a git repo with ```git init``` in the directory you wish to clone NBApi to.
@@ -32,6 +33,14 @@ NBApi should now be running!
 # Objective:
 Using NBA draft data obtained from [nba-draft-predictor](https://github.com/brsong/nba-draft-predictor) set up an API
 using Python Flask and display the data using React.js.
+
+## To Do:
+Ideas I hope/plan to integrate into the project:
+- **DONE!** ~Build project on Heroku for live demo~
+- **DONE!** ~Obtain recent NBA team tweets (based on team selected on the draft board) from Twitter API~
+- Update API to be ReSTful
+- Integrate PostreSQL (since it is utilized by Heroku) to store data rather than in csv files
+- Utilize Spark to establish an ETL workflow to replace webscrape -> write to csv protocol
 
 ## Draft Data:
 Currently the data is limited to:
