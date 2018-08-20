@@ -13,7 +13,6 @@ class PickListDisplay extends Component {
   handleRowClick(event) {
     const { onClick, pick } = this.props;
     onClick(event, pick);
-    // this.props.onClick(event, this.props.pick);
   }
 
   render() {

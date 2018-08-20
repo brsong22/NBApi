@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import PickListDisplay from './PickListDisplay';
 import { StatsTableHeaders, HandleErrors } from '../DraftStats/DraftStats';
 
-const nbapiEndpoint = process.env.REACT_APP_NBAPI_KEY;
+const nbapiEndpoint = process.env.REACT_APP_NBAPI_ENDPOINT;
 
 class DraftBoard extends Component {
   static headers = ['Pick', 'Team', 'Player'];
@@ -19,7 +19,7 @@ class DraftBoard extends Component {
 
   componentDidMount() {
     const { year } = this.props;
-    const draftBoardURL = nbapiEndpoint + year;
+    const draftBoardURL = `${nbapiEndpoint}drafts/${year}`;
     this.getDraftBoard(draftBoardURL);
   }
 
@@ -27,7 +27,7 @@ class DraftBoard extends Component {
     const { year, selectedRow } = this.props;
     const { data } = this.state;
     if (year !== prevProps.year) {
-      const draftBoardURL = nbapiEndpoint + year;
+      const draftBoardURL = `${nbapiEndpoint}drafts/${year}`;
       this.getDraftBoard(draftBoardURL);
     } else if (selectedRow !== prevProps.selectedRow) {
       this.setPickList(data);

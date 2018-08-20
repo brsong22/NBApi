@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
 import CustomTooltip from './CustomTooltip';
 import { HandleErrors } from '../DraftStats/DraftStats';
 
-const nbapiEndpoint = process.env.REACT_APP_NBAPI_KEY;
+const nbapiEndpoint = process.env.REACT_APP_NBAPI_ENDPOINT;
 
 const teamColorCodes = {
   ATL: { primary: '#e03a3e', secondary: '#26282a' },
@@ -65,12 +65,9 @@ class DraftGraph extends Component {
   }
 
   componentDidMount() {
-    const statsSuffix = '/stats';
-    const avgsSuffix = '/avgs';
-    const delim = '/';
     const { year, pick } = this.props;
-    const draftPickStats = nbapiEndpoint + year + delim + pick + statsSuffix;
-    const draftPickAvgs = nbapiEndpoint + year + avgsSuffix;
+    const draftPickStats = `${nbapiEndpoint}drafts/${year}/${pick}/stats`;
+    const draftPickAvgs = `${nbapiEndpoint}drafts/${year}/avgs`;
     Promise.all([DraftGraph.getPickStats(draftPickStats), DraftGraph.getPickAvgs(draftPickAvgs)])
       .then(([stats, avgs]) => {
         this.setState({
@@ -87,12 +84,9 @@ class DraftGraph extends Component {
 
   componentDidUpdate(prevProps) {
     const { year, pick } = this.props;
-    const statsSuffix = '/stats';
-    const avgsSuffix = '/avgs';
-    const delim = '/';
     if (year !== prevProps.year) {
-      const draftPickStats = nbapiEndpoint + year + delim + pick + statsSuffix;
-      const draftPickAvgs = nbapiEndpoint + year + avgsSuffix;
+      const draftPickStats = `${nbapiEndpoint}drafts/${year}/${pick}/stats`;
+      const draftPickAvgs = `${nbapiEndpoint}drafts/${year}/avgs`;
       Promise.all([DraftGraph.getPickStats(draftPickStats), DraftGraph.getPickAvgs(draftPickAvgs)])
         .then(([stats, avgs]) => {
           this.setState({
@@ -106,7 +100,7 @@ class DraftGraph extends Component {
           this.createBarData();
         });
     } else if (pick !== prevProps.pick) {
-      const draftPickStats = nbapiEndpoint + year + delim + pick + statsSuffix;
+      const draftPickStats = `${nbapiEndpoint}drafts/${year}/${pick}/stats`;
       Promise.all([DraftGraph.getPickStats(draftPickStats)])
         .then(([stats]) => {
           this.setState({

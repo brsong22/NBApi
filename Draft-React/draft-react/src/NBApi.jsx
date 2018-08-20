@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import DraftForm from './DraftForm/DraftForm';
+import TeamTweets from './TeamTweets/TeamTweets';
 import DraftBoard from './DraftBoard/DraftBoard';
 import { DraftStats } from './DraftStats/DraftStats';
 import DraftGraph from './DraftGraph/DraftGraph';
@@ -19,7 +20,7 @@ class NBApi extends Component {
 
   handleFormSubmit(event, state) {
     event.preventDefault();
-    this.setState({ year: state.year });
+    this.setState({ year: parseInt(state.year, 10) });
   }
 
   handleRowClick(event, pick) {
@@ -27,12 +28,15 @@ class NBApi extends Component {
   }
 
   render() {
-    const { year, selectedRow, pick } = this.state;
+    const {
+      year, selectedRow, pick,
+    } = this.state;
     return (
       <div>
         <DraftForm handleFormSubmit={this.handleFormSubmit} />
+        <br />
         <div>
-          <br />
+          <TeamTweets pick={pick} year={year} />
           <br />
           <div>
             <strong>
@@ -40,7 +44,6 @@ class NBApi extends Component {
             </strong>
             {year}
           </div>
-          <br />
         </div>
         <div id="draft-list-container">
           <DraftBoard onClick={this.handleRowClick} year={year} selectedRow={selectedRow} />
