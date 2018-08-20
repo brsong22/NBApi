@@ -83,7 +83,7 @@ class TeamTweets extends Component {
             handle={t.user.screen_name}
             name={t.user.name}
             text={t.text}
-            date={t.created_at}
+            date={t.created_at.split(' ')}
           />
         ));
         this.setState({ tweets });

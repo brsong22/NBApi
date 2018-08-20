@@ -4,12 +4,14 @@ Draft-React/*.git
 Draft-React/*.gitignore
 Procfile
 *.env
+*.pyc
 *.csv
 !Draft-Flask/draft-flask/*.csv
 *.txt
 !requirements.txt
 *.ini
 *.json
+flask_configs.py
 !package.json
 
 # Windows thumbnail cache files
