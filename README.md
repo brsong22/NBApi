@@ -40,6 +40,8 @@ Ideas I hope/plan to integrate into the project:
 - **DONE!** ~Obtain recent NBA team tweets (based on team selected on the draft board) from Twitter API~
 - Update API to be ReSTful
 - Integrate PostreSQL (since it is utilized by Heroku) to store data rather than in csv files
+- Add filter feature to UI
+- Add additional graphics for viewing player/team stats
 
 ## Draft Data:
 Currently the data is limited to:
